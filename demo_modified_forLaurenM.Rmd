@@ -1,0 +1,138 @@
+---
+title: "Demo_modified_Lauren"
+output: html_notebook
+---
+Libraries
+```{r}
+package_list<-c("taxize",
+                "worrms",
+                "tidyr",
+                "dplyr",
+                "tibble",
+                "openxlsx")
+#install.packages("taxize") #install packages as necessary
+#install.packages("tidyr") # "
+#install.packages("dplyr") # "
+#install.packages("tibble") # "
+#install.packages("openxlsx")
+for (i in package_list) {
+  library(i, character.only = TRUE)
+}
+```
+
+Load data
+```{r}
+setwd("C:\\Users\\Dale\\Desktop") #file location
+initial<-read.xlsx("Pvent_P&S_135_supptable1_v2.xlsx", sheet=1, startRow=6, colNames=FALSE) #file name; skip first 5 roles, which aren't species names
+```
+
+
+create dataframe for desired taxon columns; will remove non-Darwin Core ones later
+```{r}
+taxon_data<-data.frame(matrix(ncol=7,nrow=length(initial$X1)))
+column_names<-c("AphiaID","phylum","dataProvider_Name","scientificName","scientificNameID","identificationRemarks","taxonRank")
+colnames(taxon_data)<-column_names
+taxon_data$dataProvider_Name<-initial$X1
+```
+
+split out "sp."  and "spp." out
+```{r}
+taxon_data$identificationRemarks[c(grep("sp\\.",taxon_data$dataProvider_Name))]<-"sp." #put sp. in when in dataaProvider_Name
+
+taxon_data$identificationRemarks[c(grep("spp\\.",taxon_data$dataProvider_Name))]<-"spp." #put spp. "
+
+taxon_data$dataProvider_Name<- gsub("sp\\.","",taxon_data$dataProvider_Name)
+
+taxon_data$dataProvider_Name<- gsub("spp\\.","",taxon_data$dataProvider_Name)
+
+```
+
+Try to get AphiaID from dataProvider_Name
+```{r}
+#remove rows that are entirely NA
+taxon_data<- taxon_data %>% drop_na(dataProvider_Name)
+  
+for (i in 1:length(taxon_data$dataProvider_Name)) {
+  worms_results<-get_wormsid(taxon_data$dataProvider_Name[i])
+  worms_results<-worms_results[[1]]
+    if (isTRUE(worms_results>0) == TRUE) {
+      taxon_data$AphiaID[i]<-worms_results
+    }
+    else
+      taxon_data$AphiaID[i]<-paste("Error: no AphiaID for dataProvider_Name value in row",i,sep=" ")
+}
+
+#some of these result in multiple rows; when it comes up in the console asking you to select a row, 1 is usually the best choice; however, for some reason, setting rows=1 in get_wormsid() results in errors for Lepetodrilus
+
+#this make take a while
+```
+
+fill in scientificName from AphiaID
+```{r}
+for (i in 1:length(taxon_data$dataProvider_Name)) {
+  if ((!grepl("[^0-9]", taxon_data$AphiaID[i]))==TRUE) { #if $AphiaID contains only numbers,
+    taxon_data$scientificName[i]<-wm_id2name(as.numeric(taxon_data$AphiaID[i]))
+  } #retrieve and paste scientificName for AphiaID 
+  else 
+    taxon_data$scientificName[i]<-paste("cannot get scientificName from AphiaID - no valid AphiaID")  #otherwise, paste error message
+}
+```
+
+check if AphiaID -> scientificName value matches value from data provider
+```{r}
+#create column to hold match/nomatch data
+taxon_data<-add_column(taxon_data,provider_sciName_match="",.after="scientificName")
+
+#check if match, tolower() is to avoid mismatch due to case; true means the columns dataProvider_Name and scientificName match, false means they don't
+for (i in 1:length(taxon_data$scientificName)) {
+  taxon_data$provider_sciName_match[i]<-isTRUE(tolower(taxon_data$dataProvider_Name[i]) == tolower(taxon_data$scientificName[i]))
+}
+
+```
+
+Fill in scientificNameID for those with numeric values in AphiaID; using LSIDs
+```{r}
+for (i in 1:length(taxon_data$dataProvider_Name)) {
+  if ((!grepl("[^0-9]", taxon_data$AphiaID[i]))==TRUE) { #if $AphiaID contains only numbers,
+    taxon_data$scientificNameID[i]<-paste("urn:lsid:marinespecies.org:taxname:",taxon_data$AphiaID[i],sep="")
+  } #assemble LSID 
+  else 
+    taxon_data$scientificNameID[i]<-paste("cannot create LSID - no valid AphiaID")  #otherwise, paste error message
+}
+```
+
+retrieve and fill in taxonRank from AphiaID
+```{r}
+for (i in 1:length(taxon_data$dataProvider_Name)) {
+  if ((!grepl("[^0-9]", taxon_data$AphiaID[i]))==TRUE) { #if AphiaID contains only numbers,
+    taxon_data$taxonRank[i]<-tax_rank(taxon_data$AphiaID[i], db="worms")
+  } #retrieve and paste taxon rank
+  else 
+    taxon_data$taxonRank[i]<-paste("cannot retrieve taxonomic rank - no valid AphiaID")  #otherwise, paste error message
+}
+
+#the above results in taxonRank being a list; set to character for exporting
+taxon_data$taxonRank<-as.character(taxon_data$taxonRank) 
+```
+
+retrieve and fill in phylum from AphiaID
+```{r}
+for (i in 1:length(taxon_data$dataProvider_Name)){
+  if ((!grepl("[^0-9]", taxon_data$AphiaID[i]))==TRUE) {
+      tree<-classification(as.numeric(taxon_data$AphiaID[i]), db='worms') #get taxonomic stuff from WoRMS based on AphiaID
+      df_tree<-as.data.frame(tree[[1]]) #take just the name/rank/id portion, as a df, from classification() output
+        if (length(df_tree$name[(which(df_tree$rank=="Phylum"))])==0) { #some are only to Animalia, and so have no value for phylum in the output from classification(); put "NA" here. This if/else helps prevent the for loop from throwing an error and stopping when it encounters a classification() output that has no phylum
+            taxon_data$phylum[i]<-"NA"
+    #paste(c("error row:",i," AphiaID:",taxon_data$AphiaID[i]), sep="")
+         }
+        else
+          taxon_data$phylum[i]<-df_tree$name[which(df_tree$rank == "Phylum")] #set name of the phylum to taxon_data$phylum value
+  } else
+      taxon_data$phylum[i]<-paste("no phylum value for invalid AphiaIDs")
+}
+```
+
+output current chart as csv
+```{r}
+write.csv(taxon_data,"output_demo_modified_forLaurenM.csv")
+```

@@ -1,0 +1,67 @@
+---
+title: "Demo_modified_Lauren"
+output: html_notebook
+---
+Libraries
+```{r}
+package_list<-c("taxize",
+                "worrms",
+                "tidyr",
+                "dplyr",
+                "tibble",
+                "openxlsx")
+#install.packages("taxize") #install packages as necessary
+#install.packages("tidyr") # "
+#install.packages("dplyr") # "
+#install.packages("tibble") # "
+#install.packages("openxlsx")
+for (i in package_list) {
+  library(i, character.only = TRUE)
+}
+```
+
+Load data
+```{r}
+setwd("C:\\Users\\Dale\\Desktop") #file location
+initial<-read.xlsx("Pvent_P&S_135_supptable1_v2.xlsx", sheet=1, startRow=6, colNames=FALSE) #file name; skip first 5 roles, which aren't species names
+```
+
+
+create dataframe for desired taxon columns; will remove non-Darwin Core ones later
+```{r}
+taxon_data<-data.frame(matrix(ncol=7,nrow=length(initial$X1)))
+column_names<-c("AphiaID","phylum","dataProvider_Name","scientificName","scientificNameID","identificationRemarks","taxonRank")
+colnames(taxon_data)<-column_names
+taxon_data$dataProvider_Name<-initial$X1
+```
+
+split out "sp."  and "spp." out
+```{r}
+# taxon_data$identificationRemarks[c(grep("sp\\.",taxon_data$dataProvider_Name))]<-"sp." #put sp. in when in dataaProvider_Name
+# 
+# taxon_data$identificationRemarks[c(grep("spp\\.",taxon_data$dataProvider_Name))]<-"spp." #put spp. "
+# 
+# taxon_data$dataProvider_Name<- gsub("sp\\.","",taxon_data$dataProvider_Name)
+# 
+# taxon_data$dataProvider_Name<- gsub("spp\\.","",taxon_data$dataProvider_Name)
+```
+
+Try to get AphiaID from dataProvider_Name
+```{r}
+#remove rows that are entirely NA
+taxon_data<- taxon_data %>% drop_na(dataProvider_Name)
+  
+for (i in 1:length(taxon_data$dataProvider_Name)) {
+  worms_results<-get_wormsid(taxon_data$dataProvider_Name[i])
+  worms_results<-worms_results[[1]]
+    if (isTRUE(worms_results>0) == TRUE) {
+      taxon_data$AphiaID[i]<-worms_results
+    }
+    else
+      taxon_data$AphiaID[i]<-paste("Error: no AphiaID for dataProvider_Name value in row",i,sep=" ")
+}
+
+#some of these result in multiple rows; when it comes up in the console asking you to select a row, 1 is usually the best choice; however, for some reason, setting rows=1 in get_wormsid() results in errors for Lepetodrilus
+
+#this make take a while
+```
