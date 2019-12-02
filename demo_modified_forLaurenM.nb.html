@@ -196,14 +196,9 @@ for (i in package_list) {
 <p>Load data</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2V0d2QoXCJDOlxcXFxVc2Vyc1xcXFxEYWxlXFxcXERlc2t0b3BcIikgI2ZpbGUgbG9jYXRpb25cbmBgYCJ9 -->
-<pre class="r"><code>setwd(&quot;C:\\Users\\Dale\\Desktop&quot;) #file location</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVGhlIHdvcmtpbmcgZGlyZWN0b3J5IHdhcyBjaGFuZ2VkIHRvIEM6L1VzZXJzL0RhbGUvRGVza3RvcCBpbnNpZGUgYSBub3RlYm9vayBjaHVuay4gVGhlIHdvcmtpbmcgZGlyZWN0b3J5IHdpbGwgYmUgcmVzZXQgd2hlbiB0aGUgY2h1bmsgaXMgZmluaXNoZWQgcnVubmluZy4gVXNlIHRoZSBrbml0ciByb290LmRpciBvcHRpb24gaW4gdGhlIHNldHVwIGNodW5rIHRvIGNoYW5nZSB0aGUgdGhlIHdvcmtpbmcgZGlyZWN0b3J5IGZvciBub3RlYm9vayBjaHVua3MuXG4ifQ== -->
-<pre><code>The working directory was changed to C:/Users/Dale/Desktop inside a notebook chunk. The working directory will be reset when the chunk is finished running. Use the knitr root.dir option in the setup chunk to change the the working directory for notebook chunks.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW5pdGlhbDwtcmVhZC54bHN4KFwiUHZlbnRfUCZTXzEzNV9zdXBwdGFibGUxX3YyLnhsc3hcIiwgc2hlZXQ9MSwgc3RhcnRSb3c9NiwgY29sTmFtZXM9RkFMU0UpICNmaWxlIG5hbWU7IHNraXAgZmlyc3QgNSByb2xlcywgd2hpY2ggYXJlbid0IHNwZWNpZXMgbmFtZXNcbmBgYCJ9 -->
-<pre class="r"><code>initial&lt;-read.xlsx(&quot;Pvent_P&amp;S_135_supptable1_v2.xlsx&quot;, sheet=1, startRow=6, colNames=FALSE) #file name; skip first 5 roles, which aren't species names</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2V0d2QoXCJDOlxcXFxVc2Vyc1xcXFxEYWxlXFxcXERlc2t0b3BcIikgI2ZpbGUgbG9jYXRpb25cbmluaXRpYWw8LXJlYWQueGxzeChcIlB2ZW50X1AmU18xMzVfc3VwcHRhYmxlMV92Mi54bHN4XCIsIHNoZWV0PTEsIHN0YXJ0Um93PTYsIGNvbE5hbWVzPUZBTFNFKSAjZmlsZSBuYW1lOyBza2lwIGZpcnN0IDUgcm9sZXMsIHdoaWNoIGFyZW4ndCBzcGVjaWVzIG5hbWVzXG5gYGAifQ== -->
+<pre class="r"><code>setwd(&quot;C:\\Users\\Dale\\Desktop&quot;) #file location
+initial&lt;-read.xlsx(&quot;Pvent_P&amp;S_135_supptable1_v2.xlsx&quot;, sheet=1, startRow=6, colNames=FALSE) #file name; skip first 5 roles, which aren't species names</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -221,9 +216,11 @@ taxon_data$dataProvider_Name&lt;-initial$X1</code></pre>
 <p>split out “sp.” and “spp.” out</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGF4b25fZGF0YSRpZGVudGlmaWNhdGlvblJlbWFya3NbYyhncmVwKFwic3BcXFxcLlwiLHRheG9uX2RhdGEkZGF0YVByb3ZpZGVyX05hbWUpKV08LVwic3AuXCIgI3B1dCBzcC4gaW4gd2hlbiBpbiBkYXRhYVByb3ZpZGVyX05hbWVcbnRheG9uX2RhdGEkaWRlbnRpZmljYXRpb25SZW1hcmtzW2MoZ3JlcChcInNwcFxcXFwuXCIsdGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZSkpXTwtXCJzcHAuXCIgI3B1dCBzcHAuIFwiXG50YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lPC0gZ3N1YihcInNwXFxcXC5cIixcIlwiLHRheG9uX2RhdGEkZGF0YVByb3ZpZGVyX05hbWUpXG50YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lPC0gZ3N1YihcInNwcFxcXFwuXCIsXCJcIix0YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lKVxuYGBgIn0= -->
-<pre class="r"><code>taxon_data$identificationRemarks[c(grep(&quot;sp\\.&quot;,taxon_data$dataProvider_Name))]&lt;-&quot;sp.&quot; #put sp. in when in dataaProvider_Name
-taxon_data$identificationRemarks[c(grep(&quot;spp\\.&quot;,taxon_data$dataProvider_Name))]&lt;-&quot;spp.&quot; #put spp. &quot;
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3B1dCBzcC4gYW5kIHNwcC4gaW4gaWRlbnRpZmljYXRpb25SZW1hcmtzIHdoZW4gaW4gZGF0YVByb3ZpZGVyX05hbWVcbnRheG9uX2RhdGEkaWRlbnRpZmljYXRpb25SZW1hcmtzW2MoZ3JlcChcInNwXFxcXC5cIix0YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lKSldPC1cInNwLlwiIFxudGF4b25fZGF0YSRpZGVudGlmaWNhdGlvblJlbWFya3NbYyhncmVwKFwic3BwXFxcXC5cIix0YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lKSldPC1cInNwcC5cIiBcbiNyZW1vdmUgc3AuIGFuZCBzcHAuIGZyb20gaWRlbnRpZmljYXRpb25SZW1hcmtzXG50YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lPC0gZ3N1YihcInNwXFxcXC5cIixcIlwiLHRheG9uX2RhdGEkZGF0YVByb3ZpZGVyX05hbWUpXG50YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lPC0gZ3N1YihcInNwcFxcXFwuXCIsXCJcIix0YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lKVxuYGBgIn0= -->
+<pre class="r"><code>#put sp. and spp. in identificationRemarks when in dataProvider_Name
+taxon_data$identificationRemarks[c(grep(&quot;sp\\.&quot;,taxon_data$dataProvider_Name))]&lt;-&quot;sp.&quot; 
+taxon_data$identificationRemarks[c(grep(&quot;spp\\.&quot;,taxon_data$dataProvider_Name))]&lt;-&quot;spp.&quot; 
+#remove sp. and spp. from identificationRemarks
 taxon_data$dataProvider_Name&lt;- gsub(&quot;sp\\.&quot;,&quot;&quot;,taxon_data$dataProvider_Name)
 taxon_data$dataProvider_Name&lt;- gsub(&quot;spp\\.&quot;,&quot;&quot;,taxon_data$dataProvider_Name)</code></pre>
 <!-- rnb-source-end -->
@@ -232,10 +229,14 @@ taxon_data$dataProvider_Name&lt;- gsub(&quot;spp\\.&quot;,&quot;&quot;,taxon_dat
 <p>Try to get AphiaID from dataProvider_Name</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3JlbW92ZSByb3dzIHRoYXQgYXJlIGVudGlyZWx5IE5BXG50YXhvbl9kYXRhPC0gdGF4b25fZGF0YSAlPiUgZHJvcF9uYShkYXRhUHJvdmlkZXJfTmFtZSlcbiAgXG5mb3IgKGkgaW4gMTpsZW5ndGgodGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZSkpIHtcbiAgd29ybXNfcmVzdWx0czwtZ2V0X3dvcm1zaWQodGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZVtpXSlcbiAgd29ybXNfcmVzdWx0czwtd29ybXNfcmVzdWx0c1tbMV1dXG4gICAgaWYgKGlzVFJVRSh3b3Jtc19yZXN1bHRzPjApID09IFRSVUUpIHtcbiAgICAgIHRheG9uX2RhdGEkQXBoaWFJRFtpXTwtd29ybXNfcmVzdWx0c1xuICAgIH1cbiAgICBlbHNlXG4gICAgICB0YXhvbl9kYXRhJEFwaGlhSURbaV08LXBhc3RlKFwiRXJyb3I6IG5vIEFwaGlhSUQgZm9yIGRhdGFQcm92aWRlcl9OYW1lIHZhbHVlIGluIHJvd1wiLGksc2VwPVwiIFwiKVxufVxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3JlbW92ZSByb3dzIHRoYXQgYXJlIGVudGlyZWx5IE5BXG50YXhvbl9kYXRhPC0gdGF4b25fZGF0YSAlPiUgZHJvcF9uYShkYXRhUHJvdmlkZXJfTmFtZSlcbiNzb21lIG5hbWVzIHdlcmUgcmV0dXJuaW5nIFwiTkFcIiBmb3IgbmFtZXMgdGhhdCBsb29rZWQgdmlhYmxlIGJlY2F1c2Ugb2YgYSBzcGFjZSBhdCB0aGUgZW5kOyB0aGUgYmFzZSBmdW5jdGlvbiB0cmltd3MgcmVtb3ZlcyB0aGlzIHNwYWNlXG5mb3IgKGkgaW4gMTpsZW5ndGgodGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZSkpIHtcbiAgdGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZVtpXTwtdHJpbXdzKHRheG9uX2RhdGEkZGF0YVByb3ZpZGVyX05hbWVbaV0sIHdoaWNoID0gXCJib3RoXCIpXG59XG4jZ2V0IEFwaGlhSUQgdXNpbmcgbmFtZSBnaXZlbiBpbiBkYXRhUHJvdmlkZXJfTmFtZTsgaWYgbm8gbWF0Y2hlcywgaW5wdXQgYW4gZXJyb3IgbWVzc2FnZSBmb3IgdGhhdCBBcGhpYUlEXG5mb3IgKGkgaW4gMTpsZW5ndGgodGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZSkpIHtcbiAgd29ybXNfcmVzdWx0czwtZ2V0X3dvcm1zaWQodGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZVtpXSlcbiAgd29ybXNfcmVzdWx0czwtd29ybXNfcmVzdWx0c1tbMV1dXG4gICAgaWYgKGlzVFJVRSh3b3Jtc19yZXN1bHRzPjApID09IFRSVUUpIHtcbiAgICAgIHRheG9uX2RhdGEkQXBoaWFJRFtpXTwtd29ybXNfcmVzdWx0c1xuICAgIH1cbiAgICBlbHNlXG4gICAgICB0YXhvbl9kYXRhJEFwaGlhSURbaV08LXBhc3RlKFwiRXJyb3I6IG5vIEFwaGlhSUQgZm9yIGRhdGFQcm92aWRlcl9OYW1lIHZhbHVlIGluIHJvd1wiLGksc2VwPVwiIFwiKVxufVxuYGBgIn0= -->
 <pre class="r"><code>#remove rows that are entirely NA
 taxon_data&lt;- taxon_data %&gt;% drop_na(dataProvider_Name)
-  
+#some names were returning &quot;NA&quot; for names that looked viable because of a space at the end; the base function trimws removes this space
+for (i in 1:length(taxon_data$dataProvider_Name)) {
+  taxon_data$dataProvider_Name[i]&lt;-trimws(taxon_data$dataProvider_Name[i], which = &quot;both&quot;)
+}
+#get AphiaID using name given in dataProvider_Name; if no matches, input an error message for that AphiaID
 for (i in 1:length(taxon_data$dataProvider_Name)) {
   worms_results&lt;-get_wormsid(taxon_data$dataProvider_Name[i])
   worms_results&lt;-worms_results[[1]]
@@ -405,17 +406,17 @@ Retrieving data for taxon 'Lepetodrilus tevnianus'</code></pre>
 * Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdMZXBldG9kcmlsdXMgJ1xuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdMZXBldG9kcmlsdXMnXG4ifQ== -->
 <pre><code>
-Retrieving data for taxon 'Lepetodrilus '</code></pre>
+Retrieving data for taxon 'Lepetodrilus'</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgTGVwZXRvZHJpbHVzIFxuPT0gIFJlc3VsdHMgID09PT09PT09PT09PT09PT09XG5cbiogVG90YWw6IDEgXG4qIEZvdW5kOiAwIFxuKiBOb3QgRm91bmQ6IDFcbj09ICAxIHF1ZXJpZXMgID09PT09PT09PT09PT09PVxuIn0= -->
-<pre><code>x  Not Found:  Lepetodrilus 
+<!-- rnb-output-begin eyJkYXRhIjoi4oiaICBGb3VuZDogIExlcGV0b2RyaWx1c1xuPT0gIFJlc3VsdHMgID09PT09PT09PT09PT09PT09XG5cbiogVG90YWw6IDEgXG4qIEZvdW5kOiAxIFxuKiBOb3QgRm91bmQ6IDBcbj09ICAxIHF1ZXJpZXMgID09PT09PT09PT09PT09PVxuIn0= -->
+<pre><code>v  Found:  Lepetodrilus
 ==  Results  =================
 
 * Total: 1 
-* Found: 0 
-* Not Found: 1
+* Found: 1 
+* Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdOZW9tcGhhbHVzIGZyZXR0ZXJhZSdcbiJ9 -->
@@ -431,17 +432,17 @@ Retrieving data for taxon 'Neomphalus fretterae'</code></pre>
 * Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdQYWNoeWRlcm1pYSBsYWV2aXMgJ1xuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdQYWNoeWRlcm1pYSBsYWV2aXMnXG4ifQ== -->
 <pre><code>
-Retrieving data for taxon 'Pachydermia laevis '</code></pre>
+Retrieving data for taxon 'Pachydermia laevis'</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgUGFjaHlkZXJtaWEgbGFldmlzIFxuPT0gIFJlc3VsdHMgID09PT09PT09PT09PT09PT09XG5cbiogVG90YWw6IDEgXG4qIEZvdW5kOiAwIFxuKiBOb3QgRm91bmQ6IDFcbj09ICAxIHF1ZXJpZXMgID09PT09PT09PT09PT09PVxuIn0= -->
-<pre><code>x  Not Found:  Pachydermia laevis 
+<!-- rnb-output-begin eyJkYXRhIjoi4oiaICBGb3VuZDogIFBhY2h5ZGVybWlhIGxhZXZpc1xuPT0gIFJlc3VsdHMgID09PT09PT09PT09PT09PT09XG5cbiogVG90YWw6IDEgXG4qIEZvdW5kOiAxIFxuKiBOb3QgRm91bmQ6IDBcbj09ICAxIHF1ZXJpZXMgID09PT09PT09PT09PT09PVxuIn0= -->
+<pre><code>v  Found:  Pachydermia laevis
 ==  Results  =================
 
 * Total: 1 
-* Found: 0 
-* Not Found: 1
+* Found: 1 
+* Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdQZWx0b3NwaXJhIGRlbGljYXRhJ1xuIn0= -->
@@ -457,17 +458,17 @@ Retrieving data for taxon 'Peltospira delicata'</code></pre>
 * Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdQaHltb3JoeW5jaHVzICdcbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdQaHltb3JoeW5jaHVzJ1xuIn0= -->
 <pre><code>
-Retrieving data for taxon 'Phymorhynchus '</code></pre>
+Retrieving data for taxon 'Phymorhynchus'</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgUGh5bW9yaHluY2h1cyBcbj09ICBSZXN1bHRzICA9PT09PT09PT09PT09PT09PVxuXG4qIFRvdGFsOiAxIFxuKiBGb3VuZDogMCBcbiogTm90IEZvdW5kOiAxXG49PSAgMSBxdWVyaWVzICA9PT09PT09PT09PT09PT1cbiJ9 -->
-<pre><code>x  Not Found:  Phymorhynchus 
+<!-- rnb-output-begin eyJkYXRhIjoi4oiaICBGb3VuZDogIFBoeW1vcmh5bmNodXNcbj09ICBSZXN1bHRzICA9PT09PT09PT09PT09PT09PVxuXG4qIFRvdGFsOiAxIFxuKiBGb3VuZDogMSBcbiogTm90IEZvdW5kOiAwXG49PSAgMSBxdWVyaWVzICA9PT09PT09PT09PT09PT1cbiJ9 -->
+<pre><code>v  Found:  Phymorhynchus
 ==  Results  =================
 
 * Total: 1 
-* Found: 0 
-* Not Found: 1
+* Found: 1 
+* Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdQbGFub3JiaWRlbGxhIHBsYW5pc3BpcmEnXG4ifQ== -->
@@ -483,17 +484,17 @@ Retrieving data for taxon 'Planorbidella planispira'</code></pre>
 * Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdQcm92YW5uYSAnXG4ifQ== -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdQcm92YW5uYSdcbiJ9 -->
 <pre><code>
-Retrieving data for taxon 'Provanna '</code></pre>
+Retrieving data for taxon 'Provanna'</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgUHJvdmFubmEgXG49PSAgUmVzdWx0cyAgPT09PT09PT09PT09PT09PT1cblxuKiBUb3RhbDogMSBcbiogRm91bmQ6IDAgXG4qIE5vdCBGb3VuZDogMVxuPT0gIDEgcXVlcmllcyAgPT09PT09PT09PT09PT09XG4ifQ== -->
-<pre><code>x  Not Found:  Provanna 
+<!-- rnb-output-begin eyJkYXRhIjoi4oiaICBGb3VuZDogIFByb3Zhbm5hXG49PSAgUmVzdWx0cyAgPT09PT09PT09PT09PT09PT1cblxuKiBUb3RhbDogMSBcbiogRm91bmQ6IDEgXG4qIE5vdCBGb3VuZDogMFxuPT0gIDEgcXVlcmllcyAgPT09PT09PT09PT09PT09XG4ifQ== -->
+<pre><code>v  Found:  Provanna
 ==  Results  =================
 
 * Total: 1 
-* Found: 0 
-* Not Found: 1
+* Found: 1 
+* Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdSaHluY2hvcGVsdGEgY29uY2VudHJpY2EnXG4ifQ== -->
@@ -574,17 +575,17 @@ Retrieving data for taxon 'aplacophoran'</code></pre>
 * Not Found: 1
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdBbHZpbmVsbGEgJ1xuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdBbHZpbmVsbGEnXG4ifQ== -->
 <pre><code>
-Retrieving data for taxon 'Alvinella '</code></pre>
+Retrieving data for taxon 'Alvinella'</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgQWx2aW5lbGxhIFxuPT0gIFJlc3VsdHMgID09PT09PT09PT09PT09PT09XG5cbiogVG90YWw6IDEgXG4qIEZvdW5kOiAwIFxuKiBOb3QgRm91bmQ6IDFcbj09ICAxIHF1ZXJpZXMgID09PT09PT09PT09PT09PVxuIn0= -->
-<pre><code>x  Not Found:  Alvinella 
+<!-- rnb-output-begin eyJkYXRhIjoi4oiaICBGb3VuZDogIEFsdmluZWxsYVxuPT0gIFJlc3VsdHMgID09PT09PT09PT09PT09PT09XG5cbiogVG90YWw6IDEgXG4qIEZvdW5kOiAxIFxuKiBOb3QgRm91bmQ6IDBcbj09ICAxIHF1ZXJpZXMgID09PT09PT09PT09PT09PVxuIn0= -->
+<pre><code>v  Found:  Alvinella
 ==  Results  =================
 
 * Total: 1 
-* Found: 0 
-* Not Found: 1
+* Found: 1 
+* Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdBbXBoaXNhbXl0aGEnXG4ifQ== -->
@@ -613,12 +614,12 @@ Retrieving data for taxon 'Archinome rosacea'</code></pre>
 * Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdCcmFjaGlub3RvZ2x1bWEgJ1xuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdCcmFjaGlub3RvZ2x1bWEnXG4ifQ== -->
 <pre><code>
-Retrieving data for taxon 'Brachinotogluma '</code></pre>
+Retrieving data for taxon 'Brachinotogluma'</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgQnJhY2hpbm90b2dsdW1hIFxuPT0gIFJlc3VsdHMgID09PT09PT09PT09PT09PT09XG5cbiogVG90YWw6IDEgXG4qIEZvdW5kOiAwIFxuKiBOb3QgRm91bmQ6IDFcbj09ICAxIHF1ZXJpZXMgID09PT09PT09PT09PT09PVxuIn0= -->
-<pre><code>x  Not Found:  Brachinotogluma 
+<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgQnJhY2hpbm90b2dsdW1hXG49PSAgUmVzdWx0cyAgPT09PT09PT09PT09PT09PT1cblxuKiBUb3RhbDogMSBcbiogRm91bmQ6IDAgXG4qIE5vdCBGb3VuZDogMVxuPT0gIDEgcXVlcmllcyAgPT09PT09PT09PT09PT09XG4ifQ== -->
+<pre><code>x  Not Found:  Brachinotogluma
 ==  Results  =================
 
 * Total: 1 
@@ -639,17 +640,17 @@ Retrieving data for taxon 'Branchiplicatus cupreus'</code></pre>
 * Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdCcmFuY2hpcG9seW5vZSAnXG4ifQ== -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdCcmFuY2hpcG9seW5vZSdcbiJ9 -->
 <pre><code>
-Retrieving data for taxon 'Branchipolynoe '</code></pre>
+Retrieving data for taxon 'Branchipolynoe'</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgQnJhbmNoaXBvbHlub2UgXG49PSAgUmVzdWx0cyAgPT09PT09PT09PT09PT09PT1cblxuKiBUb3RhbDogMSBcbiogRm91bmQ6IDAgXG4qIE5vdCBGb3VuZDogMVxuPT0gIDEgcXVlcmllcyAgPT09PT09PT09PT09PT09XG4ifQ== -->
-<pre><code>x  Not Found:  Branchipolynoe 
+<!-- rnb-output-begin eyJkYXRhIjoi4oiaICBGb3VuZDogIEJyYW5jaGlwb2x5bm9lXG49PSAgUmVzdWx0cyAgPT09PT09PT09PT09PT09PT1cblxuKiBUb3RhbDogMSBcbiogRm91bmQ6IDEgXG4qIE5vdCBGb3VuZDogMFxuPT0gIDEgcXVlcmllcyAgPT09PT09PT09PT09PT09XG4ifQ== -->
+<pre><code>v  Found:  Branchipolynoe
 ==  Results  =================
 
 * Total: 1 
-* Found: 0 
-* Not Found: 1
+* Found: 1 
+* Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdHYWxhcGFnb215c3RpZGVzIGFyaXN0YXRhJ1xuIn0= -->
@@ -665,12 +666,337 @@ Retrieving data for taxon 'Galapagomystides aristata'</code></pre>
 * Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdHbHljZXJhICdcbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdHbHljZXJhJ1xuIn0= -->
 <pre><code>
-Retrieving data for taxon 'Glycera '</code></pre>
+Retrieving data for taxon 'Glycera'</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgR2x5Y2VyYSBcbj09ICBSZXN1bHRzICA9PT09PT09PT09PT09PT09PVxuXG4qIFRvdGFsOiAxIFxuKiBGb3VuZDogMCBcbiogTm90IEZvdW5kOiAxXG49PSAgMSBxdWVyaWVzICA9PT09PT09PT09PT09PT1cbiJ9 -->
-<pre><code>x  Not Found:  Glycera 
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgaWQgICAgICAgICAgICAgICAgICAgICAgICAgIHRhcmdldFxuMSAgICAxMjkyOTYgICAgICAgICAgICAgICAgICAgICAgICAgR2x5Y2VyYVxuMiAgIDEzNjI1NzEgICAgICAgICAgICAgICAgICAgICAgICAgR2x5Y2VyYVxuMyAgICAxNTczOTAgICAgICAgICAgICAgR2x5Y2VyYSBhYnJhbmNoaWF0YVxuNCAgICAyMDk4MDkgICAgICAgICAgICAgICAgR2x5Y2VyYSBhZnJpY2FuYVxuNSAgICAxMzAxMTYgICAgICAgICAgICAgICAgICAgIEdseWNlcmEgYWxiYVxuNiAgICAxMzAxMTcgICAgICAgICAgIEdseWNlcmEgYWxiYSBhZHNwZXJzYVxuNyAgICAzMzU0NjAgICAgICAgIEdseWNlcmEgYWxiYSBjb2NoaW5lbnNpc1xuOCAgICAzNDA4NzggICAgICBHbHljZXJhIGFsYmEgbWFjcm9icmFuY2hpYVxuOSAgICAzMzY4OTYgICAgICAgICAgICAgICAgR2x5Y2VyYSBhbGJpY2Fuc1xuMTAgICAzMjgwOTcgICAgICAgICAgICAgICAgR2x5Y2VyYSBhbWFkYWliYVxuMTEgICAzMjgwOTggICAgICAgICAgICAgR2x5Y2VyYSBhbWJvaW5lbnNpc1xuMTIgICAxNTczODggICAgICAgICAgICAgICBHbHljZXJhIGFtZXJpY2FuYVxuMTMgICAzMjgwOTkgICAgICAgICAgICAgR2x5Y2VyYSBhc3ltbWV0cmljYVxuMTQgICAzMjgxMDAgICAgICAgICAgICAgICAgIEdseWNlcmEgYmFsdGljYVxuMTUgICAzMzY4OTcgICAgICAgICAgICBHbHljZXJhIGJhc2licmFuY2hpYVxuMTYgICAzMjgxMDEgICAgICAgICAgICAgICBHbHljZXJhIGJhc3NlbnNpc1xuMTcgICAzMzM0OTcgICAgICAgICAgICAgR2x5Y2VyYSBiZW5ndWVsbGFuYVxuMTggICAzMjgxMDIgICAgICAgICAgICAgICAgIEdseWNlcmEgYmVuaGFtaVxuMTkgICAzMzY4OTggICAgICAgICAgICAgR2x5Y2VyYSBicmFuY2hpYWxpc1xuMjAgICAzMjgxMDMgICAgICAgICAgICBHbHljZXJhIGJyYW5jaGlvcG9kYVxuMjEgICAzMjgxMDQgICAgICAgICAgICAgR2x5Y2VyYSBicmV2aWNpcnJpc1xuMjIgICAzMjgxMDUgICAgICAgICAgIEdseWNlcmEgY2FsYnVjb25lbnNpc1xuMjMgICAxMzAxMTggICAgICAgICAgICAgICAgR2x5Y2VyYSBjYXBpdGF0YVxuMjQgICAzNDA4NzkgICAgR2x5Y2VyYSBjYXBpdGF0YSBiZW5ndWVsbGFuYVxuMjUgICAzNDA4ODUgICAgICAgICBHbHljZXJhIGNhcGl0YXRhIHNldG9zYVxuMjYgICAzMjgxMDYgICAgICAgICAgICAgICAgICBHbHljZXJhIGNhcm5lYVxuMjcgICAxMzAxMTkgICAgICAgICAgICAgICAgIEdseWNlcmEgY2VsdGljYVxuMjggICAzMzY4OTkgICAgICAgICAgICAgICBHbHljZXJhIGNoaWxlbnNpc1xuMjkgICAzMjgxMDcgICAgICAgICAgICAgICAgIEdseWNlcmEgY2hpcm9yaVxuMzAgICAzMjgxMDggICAgICAgICAgICAgIEdseWNlcmEgY2lubmFtb21lYVxuMzEgICAyMDk4MDggICAgICAgICAgICAgICAgIEdseWNlcmEgY2lycmF0YVxuMzIgICAxMzAxMjAgICAgICAgICAgICAgICBHbHljZXJhIGNvbnZvbHV0YVxuMzMgICAzNDA4ODAgICAgICBHbHljZXJhIGNvbnZvbHV0YSBjYXBlbnNpc1xuMzQgICAzNDA4ODEgR2x5Y2VyYSBjb252b2x1dGEgc2V2YXN0b3BvbGljYVxuMzUgICAzNDA4ODIgICAgIEdseWNlcmEgY29udm9sdXRhIHN1Y2h1bWljYVxuMzYgICAxNDY0MjQgICAgICBHbHljZXJhIGNvbnZvbHV0YSB1bmNpbmF0YVxuMzggICAzMzY5MDAgICAgICAgICAgICAgICBHbHljZXJhIGNvcnJ1Z2F0YVxuMzkgICAzMzY5MDEgICAgICAgICAgICAgICAgICBHbHljZXJhIGRhbmljYVxuNDAgICAxMzAxMjEgICAgICAgICAgICAgICAgICAgIEdseWNlcmEgZGF5aVxuNDEgICAzMjgxMDkgICAgICAgICAgICAgICBHbHljZXJhIGRlY2lwaWVuc1xuNDIgICAzMzY5MDIgICAgICAgICAgICAgICAgR2x5Y2VyYSBkZWNvcmF0YVxuNDMgICAzMjgxMTAgICAgICAgICAgR2x5Y2VyYSBkZW50cmlicmFuY2hpYVxuNDQgICAzMjgxMTEgICAgICAgICAgICAgIEdseWNlcmEgZGVyYnllbnNpc1xuNDUgICAxNTczOTIgICAgICAgICAgICBHbHljZXJhIGRpYnJhbmNoaWF0YVxuNDYgICAzMzY5MDMgICAgICAgICAgICAgICAgICBHbHljZXJhIGRpb2RvblxuNDcgICA1ODI0MTUgICAgICAgICAgICAgICAgICAgIEdseWNlcmEgZGl2YVxuNDggICAzMzM0OTggICAgICAgICAgICAgICAgICAgR2x5Y2VyYSBkdWJpYVxuNDkgICAzMzY5MDUgICAgICAgICAgICAgICAgR2x5Y2VyYSBlZGVudGF0YVxuNTAgICAzMzY5MDYgICAgICAgICAgICAgICAgR2x5Y2VyYSBlZHdhcmRzaVxuNTEgICAzMzY5MDYgICAgICAgICAgICAgICAgR2x5Y2VyYSBlZHdhcmRzaVxuNTIgICAzMjgxMTIgICAgICAgICAgICAgICAgR2x5Y2VyYSBlZHdhcmRzaVxuNTMgICAzMjgxMTMgICAgICAgICAgICAgICAgIEdseWNlcmEgZWhsZXJzaVxuNTQgICAzMjgxMTQgICAgICAgICAgICBHbHljZXJhIGVtYnJhbmNoaWF0YVxuNTUgICAzMzM0OTkgICAgICAgICAgICAgIEdseWNlcmEgZXBpcG9sYXNpc1xuNTYgICAzMzY5MDcgICAgICAgICAgICAgICAgICBHbHljZXJhIGV4aWd1YVxuNTcgICAzMzY5MDggICAgICAgICAgICAgICAgICBHbHljZXJhIGZhbGxheFxuNTggICAzMzY5MDkgICAgICAgICAgICAgR2x5Y2VyYSBmb2xsaWN1bG9zYVxuNTkgICAzMjgxMTUgICAgICAgICAgICAgICBHbHljZXJhIGZ1bmRpY29sYVxuNjAgICAzMjgxMTYgICAgICAgICAgICAgIEdseWNlcmEgZnVzaWZvcm1pc1xuNjEgICAxMzAxMjIgICAgICAgICAgICAgICAgR2x5Y2VyYSBnaWdhbnRlYVxuNjIgICAzMjgxMTcgICAgICAgICAgICAgICBHbHljZXJhIGdpbGJlcnRhZVxuNjMgICAzMjgxMTggICAgICAgIEdseWNlcmEgZ2xhdWNvcHNhbW1lbnNpc1xuNjQgICAzMzY5MTAgICAgICAgICAgICAgICAgICAgR2x5Y2VyYSBnb2VzaVxuNjUgICAzMjgxMTkgICAgICAgICAgIEdseWNlcmEgZ3VhdGVtYWxlbnNpc1xuNjYgICAzMjgxMjAgICAgICAgICAgICAgICBHbHljZXJhIGd1aW5lbnNpc1xuNjcgICAzMjgxMjEgICAgICAgICAgICBHbHljZXJhIGhhc2lkYXRlbnNpc1xuNjggICAzMjgxMjIgICAgICAgICAgICAgIEdseWNlcmEgaGV0ZXJvcG9kYVxuNjkgICAzMjgxMjMgICAgICAgICAgICAgICAgIEdseWNlcmEgaW5jZXJ0YVxuNzAgICAzMzY5MTEgICAgICAgICAgICAgICAgIEdseWNlcmEganVjdW5kYVxuNzEgICA2MDU0MTAgICAgICAgICAgICAgICAgICBHbHljZXJhIGp1bGlhZVxuNzIgICAxNzMzNjkgICAgICAgICAgICBHbHljZXJhIGtlcmd1ZWxlbnNpc1xuNzMgICAzMjgxMjQgICAgICAgICAgICAgICAgICAgR2x5Y2VyYSBrbm94aVxuNzQgICAzMzY5MTIgICAgICAgICAgICAgICAgR2x5Y2VyYSBrb2VobGVyaVxuNzUgICAzMzY5MTMgICAgICAgICAgICAgICAgR2x5Y2VyYSBrcmF1c3NpaVxuNzYgICAzMzY5MTQgICAgICAgICAgICAgICAgICBHbHljZXJhIGxhZXZpc1xuNzcgICAzMjgxMjUgICAgICAgICAgIEdseWNlcmEgbGFtZWxsaWZvcm1pc1xuNzggICAzMjgxMjYgICAgICAgICAgICBHbHljZXJhIGxhbWVsbGlwb2RpYVxuNzkgICAyMDk4MTMgICAgICAgICAgICAgIEdseWNlcmEgbGFuY2FkaXZhZVxuODAgICAxMzAxMjMgICAgICAgICAgICAgICAgIEdseWNlcmEgbGFwaWR1bVxuODIgICAyMDk4MTEgICAgICAgICAgICAgR2x5Y2VyYSBsb25naXBpbm5pc1xuODMgICAzMzM1MDAgICAgICAgICAgICAgIEdseWNlcmEgbG9uZ2lzc2ltYVxuODQgICAzMjgxMjcgICAgICAgICAgICAgIEdseWNlcmEgbWFjaW50b3NoaVxuODUgICA2MDYwODYgICAgICAgICAgIEdseWNlcmEgbWFjcm9icmFuY2hpYVxuODYgICAzMzY5MTUgICAgICAgICAgICAgIEdseWNlcmEgbWFjcm9yaGl6YVxuODcgICAzMjgxMjggICAgICAgIEdseWNlcmEgbWFkYWdhc2NhcmllbnNpc1xuODggICAzMjgxMjkgICAgICAgICAgICAgICAgIEdseWNlcmEgbWFub3JhZVxuODkgICAzMjgxMzAgICAgICAgICAgICAgICBHbHljZXJhIG1hcnRlbnNpaVxuOTAgICAzMjgxMzEgICAgICAgICAgICAgIEdseWNlcmEgbWF1cml0aWFuYVxuOTEgICAzMzY5MTYgICAgICAgICAgICAgICAgR2x5Y2VyYSBtZWNrZWxpaVxuOTIgICAzMzY5MTcgICAgICAgICAgICAgICAgIEdseWNlcmEgbWVzbmlsaVxuOTMgICAzMzM1MDEgICAgICAgICAgICAgICAgR2x5Y2VyYSBtZXhpY2FuYVxuOTQgICAzMzY5MTggICAgICAgICAgICAgIEdseWNlcmEgbWljcm9kb250YVxuOTUgICAzMzM1MDIgICAgICAgICAgICAgR2x5Y2VyYSBtaWNyb2duYXRoYVxuOTYgICAxMzAxMjQgICAgICAgICAgICAgICAgICBHbHljZXJhIG1pbWljYVxuOTcgICAxMzAxMjkgICAgICAgICAgICAgICAgICAgR2x5Y2VyYSBtaW5vclxuOTggICAxMzAxMjUgICAgICAgICAgICAgICAgICBHbHljZXJhIG1pbnV0YVxuOTkgICAzNDA4ODMgICAgR2x5Y2VyYSBtaW51dGEgc2V2YXN0b3BvbGljYVxuMTAwICAzNDA4ODQgICAgICAgIEdseWNlcmEgbWludXRhIHN1Y2h1bWljYVxuMTAxICAzMzY5MTkgICAgICAgICAgICAgR2x5Y2VyYSBtaXNha2llbnNpc1xuMTAyICAzMzY5MjAgICAgICAgICAgICAgICAgICAgR2x5Y2VyYSBtaXRpc1xuMTAzICAzMzY5MjEgICAgICAgICAgICAgICAgIEdseWNlcmEgbW9ub2RvblxuMTA0ICAzMzY5MjIgICAgICAgICAgICAgICAgR2x5Y2VyYSBtdWVsbGVyaVxuMTA1ICAzMjgxMzIgICAgICAgICAgICAgICAgICAgIEdseWNlcmEgbmFuYVxuMTA2ICAzMjgxMzMgICAgICAgICAgICAgIEdseWNlcmEgbmF0YWxlbnNpc1xuMTA3ICA1ODg0MTAgICAgICAgICAgICAgIEdseWNlcmEgbmVvcm9idXN0YVxuMTA4ICAzMzM1MDMgICAgICAgICAgICAgIEdseWNlcmEgbmljb2JhcmljYVxuMTA5ICAzMzY5MjMgICAgICAgICAgICAgIEdseWNlcmEgbmljb2JhcmljYVxuMTEwICAzMjgxMzQgICAgICAgICAgICAgICAgR2x5Y2VyYSBuaWdyaXBlc1xuMTExICA1OTUyNjkgICAgICAgICAgICAgICAgICBHbHljZXJhIG5vZWxhZVxuMTEyICA1ODg0MTUgICAgICAgICAgICAgICAgICAgIEdseWNlcmEgb2thaVxuMTEzICAzMjgxMzUgICAgICAgICAgIEdseWNlcmEgb25vbWljaGllbnNpc1xuMTE0ICAzMzY5MjQgICAgICAgR2x5Y2VyYSBvcGlzdGhvYnJhbmNoaWF0YVxuMTE1ICAzMjgxMzYgICAgICAgICAgICAgIEdseWNlcmEgb3JpZW50YWxpc1xuMTE2ICAzMzY5MjUgICAgICAgICAgICAgICAgIEdseWNlcmEgb3ZpZ2VyYVxuMTE3ICAxMzAxMjYgICAgICAgICAgICAgIEdseWNlcmEgb3h5Y2VwaGFsYVxuMTE4ICAzMjgxMzcgICAgICAgICAgICAgICAgR2x5Y2VyYSBwYWNpZmljYVxuMTE5ICAxNTczOTMgICAgICAgICAgICAgICBHbHljZXJhIHBhcGlsbG9zYVxuMTIwICAzMzY5NDYgICAgICAgICAgICAgICBHbHljZXJhIHBlcnV2aWFuYVxuMTIxICAzMjgxMzggICAgICAgICAgICAgICAgIEdseWNlcmEgcGlsaWNhZVxuMTIyICAzMjgxMzkgICAgICAgICAgICAgICAgR2x5Y2VyYSBwb2x5Z29uYVxuMTIzICAzMjgxNDAgICAgICAgICBHbHljZXJhIHBvc3Rlcm9icmFuY2hpYVxuMTI0ICAyMDk4MTAgICAgICAgICAgICAgICAgR2x5Y2VyYSBwcmFzaGFkaVxuMTI1ICAzMjgxNDEgICAgICAgICAgICAgICAgR2x5Y2VyYSBwcm9mdW5kaVxuMTI2ICAzMjgxNDIgICAgICAgICAgIEdseWNlcmEgcHJvc29icmFuY2hpYVxuMTI3ICAzMjgxNDMgICAgICAgICAgIEdseWNlcmEgcHNldWRvcm9idXN0YVxuMTI4ICAzMzY5MjYgICAgICAgICAgICAgR2x5Y2VyYSByZXRyYWN0aWxpc1xuMTI5ICAxNTczOTQgICAgICAgICAgICAgICAgIEdseWNlcmEgcm9idXN0YVxuMTMwICAzMzY5MjcgICAgICAgICAgICAgICAgICAgR2x5Y2VyYSByb3NlYVxuMTMxICAxODMxNzMgICAgICAgICAgICAgICAgICAgR2x5Y2VyYSByb3V4aVxuMTMyICAxMzAxMjcgICAgICAgICAgICAgICAgICBHbHljZXJhIHJvdXhpaVxuMTMzICAzMzY5MjggICAgICAgICAgICAgICAgICBHbHljZXJhIHJ1Z29zYVxuMTM0ICAzMjgxNDQgICAgICAgICAgICAgICAgICAgR2x5Y2VyYSBydXNzYVxuMTM1ICAzMjgxNDUgICAgICAgICAgICAgICAgR2x5Y2VyYSBydXRpbGFuc1xuMTM2ICAzMzY5MjkgICAgICAgICAgIEdseWNlcmEgc2FjY2licmFuY2hpc1xuMTM3ICAzMzY5MzAgICAgICAgICAgICAgR2x5Y2VyYSBzYWdpdHRhcmlhZVxuMTM4ICAzMzY5MzEgICAgICAgICAgICAgR2x5Y2VyYSBzYWdpdHRhcmlhZVxuMTM5ICA1ODg0MTcgICAgICAgIEdseWNlcmEgc2VtaWJyYW5jaGlvcG9kYVxuMTQwICAzMzY5MzIgICAgICAgICAgICAgICAgICBHbHljZXJhIHNldG9zYVxuMTQxICAzMzY5MzMgICAgICAgICAgICAgICAgIEdseWNlcmEgc2ltcGxleFxuMTQyICA0NjgwMjkgICAgICAgICAgICBHbHljZXJhIHNpcGhvbm9zdG9tYVxuMTQzICA1ODI0MTYgICAgICBHbHljZXJhIHNvdXRoZWFzdGF0bGFudGljYVxuMTQ0ICAzMjgxNDYgICAgICAgICAgICAgICAgICBHbHljZXJhIHNwYWRpeFxuMTQ1ICAxNTczOTUgICAgICAgICAgIEdseWNlcmEgc3BoeXJhYnJhbmNoYVxuMTQ2ICAyMDk4MTIgICAgICAgICAgICAgICAgR2x5Y2VyYSBzdWJhZW5lYVxuMTQ3ICAzMjgxNDcgICAgICAgICAgIEdseWNlcmEgdGFwcm9iYW5lbnNpc1xuMTQ4ICAzMjgxNDggICAgICAgICAgICAgICAgIEdseWNlcmEgdGF1cmljYVxuMTQ5IDEzNjI1NzIgICAgICAgICAgICAgR2x5Y2VyYSB0ZW51aWNvcm5pc1xuMTUwICAzMjgxNDkgICAgICAgICAgICAgICAgICBHbHljZXJhIHRlbnVpc1xuMTUxICAxMzAxMjggICAgICAgICAgICAgICBHbHljZXJhIHRlc3NlbGF0YVxuMTUyICAzMzU0NjEgICAgICAgICBHbHljZXJhIHRlc3NlbGF0YSBtaW5vclxuMTUzICAxMzAxMzAgICAgICAgICAgICAgIEdseWNlcmEgdHJpZGFjdHlsYVxuMTU0ICAxMzAxMzEgICAgICAgICAgICAgICBHbHljZXJhIHVuaWNvcm5pc1xuMTU1ICAzMzY5MzQgICAgICAgICAgICAgIEdseWNlcmEgdmVyZGVzY2Vuc1xuMTU2ICAyNDA1NzMgICAgICAgICAgICAgR2x5Y2VyYSB2aXJpZGVzY2Vuc1xuMzcgICAxNTUxMDkgICAgICAgICAgICAgICAgICAgICAgICAgICAgPE5BPlxuODEgICAxNTUwMzYgICAgICAgICAgICAgICAgICAgICAgICAgICAgPE5BPlxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYXV0aG9yaXR5ICAgICAgIHN0YXR1c1xuMSAgICAgICAgICAgICAgICAgICAgICAgICBMYW1hcmNrLCAxODE4ICAgICBhY2NlcHRlZFxuMiAgICAgICAgICAgICAgICAgICAgICAgICBIYXN3ZWxsLCAxODc5ICAgdW5hY2NlcHRlZFxuMyAgICAgICAgICAgICAgICAgICAgICAgVHJlYWR3ZWxsLCAxOTAxICAgdW5hY2NlcHRlZFxuNCAgICAgICAgICAgICAgICAgICAgICAgQXJ3aWRzc29uLCAxODk5ICAgICBhY2NlcHRlZFxuNSAgICAgICAgICAgICAgICAgICAoTy5GLiBNw7xsbGVyLCAxNzc2KSAgICAgYWNjZXB0ZWRcbjYgICAgICAgICAgICAgICAgICAgICAgICAgIEZhdXZlbCwgMTkzOSAgICAgYWNjZXB0ZWRcbjcgICAgICAgICAgICAgICAgICAgICAgICBTb3V0aGVybiwgMTkyMSAgICAgYWNjZXB0ZWRcbjggICAgICAgICAgICAgICAgICAgICAgICAgICBNb29yZSwgMTkxMSAgIHVuYWNjZXB0ZWRcbjkgICAgICAgICAgICAgICAgICAgICBRdWF0cmVmYWdlcywgMTg1MCAgIHVuYWNjZXB0ZWRcbjEwICAgICAgICAgICAgICAgICAgICAgICAgSW1hamltYSwgMjAwMyAgICAgYWNjZXB0ZWRcbjExICAgICAgICAgICAgICAgICAgICAgICBNY0ludG9zaCwgMTg4NSAgICAgYWNjZXB0ZWRcbjEyICAgICAgICAgICAgICAgICAgICAgICAgICBMZWlkeSwgMTg1NSAgICAgYWNjZXB0ZWRcbjEzICAgICAgICAgICAgICAgICAgICAgICAgICAgIERheSwgMTk3MyAgICAgYWNjZXB0ZWRcbjE0ICAgICAgICAgICAgICAgICAgICAgICBFaXNlbmFjaywgMTkzOSAgICAgYWNjZXB0ZWRcbjE1ICAgICAgICAgICAgICAgICAgICAgQ2hhbWJlcmxpbiwgMTkxOSAgIHVuYWNjZXB0ZWRcbjE2ICAgICAgICAgICAgICBCw7ZnZ2VtYW5uICYgRmllZ2UsIDIwMDEgICAgIGFjY2VwdGVkXG4xNyAgICAgICAgICAgICAgICAgICAgICAgIEF1Z2VuZXIsIDE5MzEgICAgIGFjY2VwdGVkXG4xOCAgICAgICAgICAgICAgQsO2Z2dlbWFubiAmIEZpZWdlLCAyMDAxICAgICBhY2NlcHRlZFxuMTkgICAgICAgICAgICAgICAgICAgIFF1YXRyZWZhZ2VzLCAxODY2ICAgdW5hY2NlcHRlZFxuMjAgICAgICAgICAgICAgICAgICAgICAgICAgIE1vb3JlLCAxOTExICAgICBhY2NlcHRlZFxuMjEgICAgICAgICAgICAgICAgICAgICAgICAgIEdydWJlLCAxODcwICAgICBhY2NlcHRlZFxuMjIgICAgICAgICAgICAgIEhhcnRtYW5uLVNjaHLDtmRlciwgMTk2MiAgICAgYWNjZXB0ZWRcbjIzICAgICAgICAgICAgICAgICAgICAgICAgIMOWcnN0ZWQsIDE4NDMgICAgIGFjY2VwdGVkXG4yNCAgICAgICAgICAgICAgICAgICAgICAgIEF1Z2VuZXIsIDE5MzEgICB1bmFjY2VwdGVkXG4yNSAgICAgICAgICAgICAgICAgICAgICAgICDDlnJzdGVkLCAxODQzICAgdW5hY2NlcHRlZFxuMjYgICAgICAgICAgICAgICBCbGFuY2hhcmQgaW4gR2F5LCAxODQ5ICAgICBhY2NlcHRlZFxuMjcgICAgICAgICAgICAgICAgICAgICAgIE8nQ29ubm9yLCAxOTg3ICAgICBhY2NlcHRlZFxuMjggICAgICAgICAgICAgICAgICAgICAgQXJ3aWRzc29uLCAxODk5ICAgdW5hY2NlcHRlZFxuMjkgICAgICAgICAgICAgICAgICAgICAgICAgIEl6dWthLCAxOTEyICAgICBhY2NlcHRlZFxuMzAgICAgICAgICAgICAgICAgICAgICAgICAgIEdydWJlLCAxODc0ICAgICBhY2NlcHRlZFxuMzEgICAgICAgICAgICAgICAgICAgICAgICAgIEdydWJlLCAxODU3ICAgdW5hY2NlcHRlZFxuMzIgICAgICAgICAgICAgICAgICAgICBLZWZlcnN0ZWluLCAxODYyICAgdW5hY2NlcHRlZFxuMzMgICAgICAgICAgICAgICAgICAgICAgICAgIE1vbnJvLCAxOTMzICAgdW5hY2NlcHRlZFxuMzQgICAgICAgICAgICAgICAgICAgIEN6ZXJuaWF2c2t5LCAxODgxICAgdW5hY2NlcHRlZFxuMzUgICAgICAgICAgICAgICAgICAgIEN6ZXJuaWF2c2t5LCAxODgxICAgdW5hY2NlcHRlZFxuMzYgICAgICAgICAgICAgICAgICAgICAgICAgIFJpb2phLCAxOTE4ICAgdW5hY2NlcHRlZFxuMzggICAgICAgICAgICAgICAgICAgICAgICAgIEJhaXJkLCAxODYzICAgdW5hY2NlcHRlZFxuMzkgICAgICAgICAgICAgICAgICAgIFF1YXRyZWZhZ2VzLCAxODY2ICAgdW5hY2NlcHRlZFxuNDAgICAgICAgICAgICAgICAgICAgICAgIE8nQ29ubm9yLCAxOTg3ICAgdW5hY2NlcHRlZFxuNDEgICAgICAgICAgICAgICAgICAgIE1hcmVuemVsbGVyLCAxODc5ICAgICBhY2NlcHRlZFxuNDIgICAgICAgICAgICAgICAgICAgIFF1YXRyZWZhZ2VzLCAxODY2ICAgdW5hY2NlcHRlZFxuNDMgICAgICAgICAgICAgICAgICAgICAgICAgICAgTGVlLCAxOTg1ICAgICBhY2NlcHRlZFxuNDQgICAgICAgICAgICAgIEhhcnRtYW5uLVNjaHLDtmRlciwgMTk3OSAgICAgYWNjZXB0ZWRcbjQ1ICAgICAgICAgICAgICAgICAgICAgICAgIEVobGVycywgMTg2OCAgICAgYWNjZXB0ZWRcbjQ2ICAgICAgICAgICAgICAgICAgICAgICBTY2htYXJkYSwgMTg2MSAgIHVuYWNjZXB0ZWRcbjQ3ICAgICAgICAgICAgICAgICAgICAgIELDtmdnZW1hbm4sIDIwMDkgICAgIGFjY2VwdGVkXG40OCAgICAgICAgICAgICAgICAgICAoQmxhaW52aWxsZSwgMTgyNSkgICAgIGFjY2VwdGVkXG40OSAgICAgICAgICAgICAgICAgICAgICAgICBIYW5zZW4sIDE4ODIgICB1bmFjY2VwdGVkXG41MCAgICAgICAgICAgICAgICAgICAgICAgIEdyYXZpZXIsIDE5MDYgICB1bmFjY2VwdGVkXG41MSAgICAgICAgICAgICAgICAgICAgICAgIEdyYXZpZXIsIDE5MDYgICB1bmFjY2VwdGVkXG41MiAgICAgICAgICAgICAgICAgICAgICAgIEdyYXZpZXIsIDE5MDAgICB1bmFjY2VwdGVkXG41MyAgICAgICAgICAgICAgICAgICAgICBBcndpZHNzb24sIDE4OTkgICAgIGFjY2VwdGVkXG41NCAgICAgICAgICAgICAgICAgS3Jpc2huYW1vb3J0aGksIDE5NjIgICAgIGFjY2VwdGVkXG41NSAgICAgICAgICAgICAgICAgICAoQ2hhbWJlcmxpbiwgMTkxOSkgICB1bmFjY2VwdGVkXG41NiAgICAgICAgICAgICAgICAgICAgIENoYW1iZXJsaW4sIDE5MTkgICB1bmFjY2VwdGVkXG41NyAgICAgICAgICAgICAgICAgICAgUXVhdHJlZmFnZXMsIDE4NTAgICAgIGFjY2VwdGVkXG41OCAgICAgICAgICAgICAgICAgICAgICAgICBFaGxlcnMsIDE4NjggICB1bmFjY2VwdGVkXG41OSAgICAgICAgICAgICAgICAgICAgIENoYW1iZXJsaW4sIDE5MTkgICAgIGFjY2VwdGVkXG42MCAgICAgICAgICAgICAgICAgICAgICAgIEZpc2NobGksIDE5MDAgICB1bmFjY2VwdGVkXG42MSAgICAgICAgICAgICAgICAgICAgUXVhdHJlZmFnZXMsIDE4NjYgICB1bmFjY2VwdGVkXG42MiAgICAgICAgICAgICAgQsO2Z2dlbWFubiAmIEZpZWdlLCAyMDAxICAgICBhY2NlcHRlZFxuNjMgICAgICAgICAgICAgIENoYXJsZXR0YSAmIEJveWVyLCAxOTc0ICAgICBhY2NlcHRlZFxuNjQgICAgICAgICAgICAgICAgICAgICAgIE1hbG1ncmVuLCAxODY3ICAgdW5hY2NlcHRlZFxuNjUgICAgICAgICAgICAgIELDtmdnZW1hbm4gJiBGaWVnZSwgMjAwMSAgICAgYWNjZXB0ZWRcbjY2ICAgICAgICAgICAgICAgICAgICAgICAgQXVnZW5lciwgMTkxOCAgICAgYWNjZXB0ZWRcbjY3ICAgICAgICAgICAgICAgICAgICAgICAgICBJenVrYSwgMTkxMiAgICAgYWNjZXB0ZWRcbjY4ICAgICAgICAgICAgICBIYXJ0bWFubi1TY2hyw7ZkZXIsIDE5NjIgICAgIGFjY2VwdGVkXG42OSAgICAgICAgICAgICAgICAgICAgICAgICBIYW5zZW4sIDE4ODIgICAgIGFjY2VwdGVkXG43MCAgICAgICAgICAgICAgICAgICAgICAgIEtpbmJlcmcsIDE4NjYgICB1bmFjY2VwdGVkXG43MSAgICAgICAgICAgICAgTWFnYWxoYWVzICYgUml6em8sIDIwMTIgICAgIGFjY2VwdGVkXG43MiAgICAgICAgICAgICAgICAgICAgICAgTWNJbnRvc2gsIDE4ODUgICAgIGFjY2VwdGVkXG43MyAgICAgICAgICAgICAgICAgICAgIEtpcmtlZ2FhcmQsIDE5OTUgICAgIGFjY2VwdGVkXG43NCAgICAgICAgICAgICAgICAgICAgICAgICAgUm91bGUsIDE4OTYgICB1bmFjY2VwdGVkXG43NSAgICAgICAgICAgICAgICAgICAgICAgU3RpbXBzb24sIDE4NTYgICB1bmFjY2VwdGVkXG43NiAgICAgICAgICAgICAgICAgICAgICAgIEtpbmJlcmcsIDE4NjYgICB1bmFjY2VwdGVkXG43NyAgICAgICAgICAgICAgICAgICAgICAgTWNJbnRvc2gsIDE4ODUgICAgIGFjY2VwdGVkXG43OCAgICAgICAgICAgICAgICAgICAgICAgICAgIEtub3gsIDE5NjAgICB1bmFjY2VwdGVkXG43OSAgICAgICAgICAgICAgICAgICAgICAgU2NobWFyZGEsIDE4NjEgICAgIGFjY2VwdGVkXG44MCAgICAgICAgICAgICAgICAgICAgUXVhdHJlZmFnZXMsIDE4NjYgICAgIGFjY2VwdGVkXG44MiAgICAgICAgICAgICAgICAgICAgICAgICAgR3J1YmUsIDE4NzggICAgIGFjY2VwdGVkXG44MyAgICAgICAgICAgICAgICAgICAgICBBcndpZHNzb24sIDE4OTkgICAgIGFjY2VwdGVkXG44NCAgICAgICAgICAgICAgICAgICAgICAgICAgR3J1YmUsIDE4NzcgICAgIGFjY2VwdGVkXG44NSAgICAgICAgICAgICAgICAgICAgICAgICAgTW9vcmUsIDE5MTEgICAgIGFjY2VwdGVkXG44NiAgICAgICAgICAgICAgICAgICAgICAgU2NobWFyZGEsIDE4NjEgICB1bmFjY2VwdGVkXG44NyAgICAgICAgICAgICAgQsO2Z2dlbWFubiAmIEZpZWdlLCAyMDAxICAgICBhY2NlcHRlZFxuODggICAgICAgICAgICAgICAgICAgICAgICAgRmF1dmVsLCAxOTMyICAgdW5hY2NlcHRlZFxuODkgICAgICAgICAgICAgICAgICAgICAgICAgIEdydWJlLCAxODcwICAgdW5hY2NlcHRlZFxuOTAgICAgICAgICAgICAgICAgICAgICAgICAgIEdydWJlLCAxODcwICAgICBhY2NlcHRlZFxuOTEgICAgICAgIEF1ZG91aW4gJiBNaWxuZSBFZHdhcmRzLCAxODMzICAgdW5hY2NlcHRlZFxuOTIgICAgICAgICAgICAgICAgICAgU2FpbnQtSm9zZXBoLCAxODk4ICAgdW5hY2NlcHRlZFxuOTMgICAgICAgICAgICAgICAgICAgKENoYW1iZXJsaW4sIDE5MTkpICAgICBhY2NlcHRlZFxuOTQgICAgICAgICAgICAgICAgICAgICAgIFNjaG1hcmRhLCAxODYxICAgdW5hY2NlcHRlZFxuOTUgICAgICAgICAgICAgICAgICAgICAgIFNjaG1hcmRhLCAxODYxICAgICBhY2NlcHRlZFxuOTYgICAgICAgICAgICAgICAgICAgICAgICBIYXJ0bWFuLCAxOTY1ICAgdW5hY2NlcHRlZFxuOTcgICAgICAgICAgICAgICAgICAgICAgIExhIEdyZWNhLCAxOTQ2ICAgICBhY2NlcHRlZFxuOTggICAgICAgICAgICAgICAgICAgIChCb2JyZXR6a3ksIDE4NzApICAgdW5hY2NlcHRlZFxuOTkgICAgICAgICAgICAgICAgICAgIEN6ZXJuaWF2c2t5LCAxODgxICAgdW5hY2NlcHRlZFxuMTAwICAgICAgICAgICAgICAgICAgIEN6ZXJuaWF2c2t5LCAxODgxICAgdW5hY2NlcHRlZFxuMTAxICAgICAgICAgICAgICAgICAgICAgICAgIEl6dWthLCAxOTEyICAgdW5hY2NlcHRlZFxuMTAyICAgICAgICAgICAgICAgICAgICAgIEpvaG5zdG9uLCAxODY1ICAgdW5hY2NlcHRlZFxuMTAzICAgICAgICAgICAgICAgICAgICAgIFNjaG1hcmRhLCAxODYxICAgdW5hY2NlcHRlZFxuMTA0ICAgICAgICAgICAgICAgICAgIFF1YXRyZWZhZ2VzLCAxODY2ICAgdW5hY2NlcHRlZFxuMTA1ICAgICAgICAgICAgICAgICAgICAgICBKb2huc29uLCAxOTAxICAgICBhY2NlcHRlZFxuMTA2ICAgICAgICAgICAgICAgICAgICAgICAgICAgRGF5LCAxOTU3ICAgICBhY2NlcHRlZFxuMTA3ICAgICAgICAgICAgICAgICAgICAgICBJbWFqaW1hLCAyMDA5ICAgICBhY2NlcHRlZFxuMTA4ICAgICAgICAgICAgICAgICAgICAgICAgIEdydWJlLCAxODY4ICAgICBhY2NlcHRlZFxuMTA5ICAgICAgICAgICAgICAgICAgICAgICAgIEdydWJlLCAxODY2ICAgdW5hY2NlcHRlZFxuMTEwICAgICAgICAgICAgICAgICAgICAgIEpvaG5zdG9uLCAxODY1ICAgdW5hY2NlcHRlZFxuMTExIELDtmdnZW1hbm4sIEJpZW5ob2xkICYgR2F1ZHJvbiwgMjAxMiAgICAgYWNjZXB0ZWRcbjExMiAgICAgICAgICAgICAgICAgICAgICAgSW1hamltYSwgMjAwOSAgICAgYWNjZXB0ZWRcbjExMyAgICAgICAgICAgICAgICAgICAgICAgICBJenVrYSwgMTkxMiAgICAgYWNjZXB0ZWRcbjExNCAgICAgICAgICAgICAgICAgICBNYXJlbnplbGxlciwgMTg3OSAgIHVuYWNjZXB0ZWRcbjExNSAgICAgICAgICAgICAgICAgICBCdXpoaW5za2FqYSwgMTk5MyAgIHVuYWNjZXB0ZWRcbjExNiAgICAgICAgICAgICAgICAgICAgICBTY2htYXJkYSwgMTg2MSAgICAgYWNjZXB0ZWRcbjExNyAgICAgICAgICAgICAgICAgICAgICAgIEVobGVycywgMTg4NyAgICAgYWNjZXB0ZWRcbjExOCAgICAgICAgICAgICAgICAgICAgICAgS2luYmVyZywgMTg2NiAgICAgYWNjZXB0ZWRcbjExOSAgICAgICAgICAgICAgICAgICAgICAgICBHcnViZSwgMTg1NyAgICAgYWNjZXB0ZWRcbjEyMCAgICAgICAgICAgICAgICAgICBRdWF0cmVmYWdlcywgMTg2NiAgIHVuYWNjZXB0ZWRcbjEyMSAgICAgICAgICAgICAgICAgICAgU3phbmlhd3NraSwgMTk3NCAgICAgYWNjZXB0ZWRcbjEyMiAgICAgICAgICAgICAgICAgICAgICAgICBSaXNzbywgMTgyNiAgICAgYWNjZXB0ZWRcbjEyMyAgICAgICAgICAgICAgICAgICAgICBIb2FnbGFuZCwgMTkyMCAgICAgYWNjZXB0ZWRcbjEyNCAgICAgICAgICAgICAgICAgICAgICAgIEZhdXZlbCwgMTkzMiAgIHVuYWNjZXB0ZWRcbjEyNSAgICAgICAgICAgICAgICAgICAgQ2hhbWJlcmxpbiwgMTkxOSAgICAgYWNjZXB0ZWRcbjEyNiAgICAgICAgICAgICBCw7ZnZ2VtYW5uICYgRmllZ2UsIDIwMDEgICAgIGFjY2VwdGVkXG4xMjcgICAgICAgICAgICAgQsO2Z2dlbWFubiAmIEZpZWdlLCAyMDAxICAgICBhY2NlcHRlZFxuMTI4ICAgICAgICAgICAgICAgICAgIFF1YXRyZWZhZ2VzLCAxODY2ICAgdW5hY2NlcHRlZFxuMTI5ICAgICAgICAgICAgICAgICAgICAgICAgRWhsZXJzLCAxODY4ICAgICBhY2NlcHRlZFxuMTMwICAgICBCbGFpbnZpbGxlIGluIFF1YXRyZWZhZ2VzLCAxODY2ICAgdW5hY2NlcHRlZFxuMTMxICAgICAgICAgICAgICAgIFthdWN0dC4gbWlzc3BlbGxpbmddICAgdW5hY2NlcHRlZFxuMTMyICAgICAgIEF1ZG91aW4gJiBNaWxuZSBFZHdhcmRzLCAxODMzICAgdW5hY2NlcHRlZFxuMTMzICAgICAgICAgICAgICAgICAgICAgICBKb2huc29uLCAxOTAxICAgdW5hY2NlcHRlZFxuMTM0ICAgICAgICAgICAgICAgICAgICAgICAgIEdydWJlLCAxODcwICAgICBhY2NlcHRlZFxuMTM1ICAgICAgICAgICAgIEdydWJlIGluIE1jSW50b3NoLCAxODg1ICAgICBhY2NlcHRlZFxuMTM2ICAgICAgICAgICAgICAgICAgICAgICAgIEdydWJlLCAxODc4ICAgdW5hY2NlcHRlZFxuMTM3ICAgICAgICAgICAgICAgICAgICAgICAgRmF1dmVsLCAxOTMyICAgdW5hY2NlcHRlZFxuMTM4ICAgICAgICAgICAgICAgICAgICAgIE1jSW50b3NoLCAxODg1ICAgICBhY2NlcHRlZFxuMTM5ICAgICAgICAgICAgICAgICAgICAgICBJbWFqaW1hLCAyMDA5ICAgICBhY2NlcHRlZFxuMTQwICAgICAgICAgICAgICAgICAgICAgICAgw5Zyc3RlZCwgMTg0MyAgIHVuYWNjZXB0ZWRcbjE0MSAgICAgICAgICAgICAgICAgICAgICAgICBHcnViZSwgMTg1NyAgIHVuYWNjZXB0ZWRcbjE0MiAgICAgICAgICAgICAgICAoRGVsbGUgQ2hpYWplLCAxODI3KSBub21lbiBkdWJpdW1cbjE0MyAgICAgICAgICAgICAgICAgICAgIELDtmdnZW1hbm4sIDIwMDkgICAgIGFjY2VwdGVkXG4xNDQgICAgICAgICAgICAgICAgICAgICBUcmVhZHdlbGwsIDE5NDMgICB1bmFjY2VwdGVkXG4xNDUgICAgICAgICAgICAgICAgICAgICAgU2NobWFyZGEsIDE4NjEgICAgIGFjY2VwdGVkXG4xNDYgICAgICAgICAgICAgICAgICAgICAgICAgR3J1YmUsIDE4NzggICAgIGFjY2VwdGVkXG4xNDcgICAgICAgICAgICAgICAgICAgICAgRGUgU2lsdmEsIDE5NjUgICB1bmFjY2VwdGVkXG4xNDggICAgICAgICAgICAgICAgICAgQ3plcm5pYXZza3ksIDE4ODEgICAgIGFjY2VwdGVkXG4xNDkgICAgICAgICAgICAgICAgICAgICAgIEhhc3dlbGwsIDE4NzkgICB1bmFjY2VwdGVkXG4xNTAgICAgICAgICAgICAgICAgICAgICAgIEhhcnRtYW4sIDE5NDQgICAgIGFjY2VwdGVkXG4xNTEgICAgICAgICAgICAgICAgICAgICAgICAgR3J1YmUsIDE4NjMgICAgIGFjY2VwdGVkXG4xNTIgICAgICAgICAgICAgICAgICAgICAgTGEgR3JlY2EsIDE5NDYgICAgIGFjY2VwdGVkXG4xNTMgICAgICAgICAgICAgICAgICAgICAgU2NobWFyZGEsIDE4NjEgICAgIGFjY2VwdGVkXG4xNTQgICAgICAgICAgICAgICAgICAgICAgIExhbWFyY2ssIDE4MTggICAgIGFjY2VwdGVkXG4xNTUgICAgICAgICAgICAgICAgICAgIENoYW1iZXJsaW4sIDE5MTkgICB1bmFjY2VwdGVkXG4xNTYgICAgICAgICAgICAgICAgICAgICAgU3RpbXBzb24sIDE4NTQgICB1bmFjY2VwdGVkXG4zNyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxOQT4gICAgICBkZWxldGVkXG44MSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxOQT4gICAgICBkZWxldGVkXG4ifQ== -->
+<pre><code>         id                          target
+1    129296                         Glycera
+2   1362571                         Glycera
+3    157390             Glycera abranchiata
+4    209809                Glycera africana
+5    130116                    Glycera alba
+6    130117           Glycera alba adspersa
+7    335460        Glycera alba cochinensis
+8    340878      Glycera alba macrobranchia
+9    336896                Glycera albicans
+10   328097                Glycera amadaiba
+11   328098             Glycera amboinensis
+12   157388               Glycera americana
+13   328099             Glycera asymmetrica
+14   328100                 Glycera baltica
+15   336897            Glycera basibranchia
+16   328101               Glycera bassensis
+17   333497             Glycera benguellana
+18   328102                 Glycera benhami
+19   336898             Glycera branchialis
+20   328103            Glycera branchiopoda
+21   328104             Glycera brevicirris
+22   328105           Glycera calbuconensis
+23   130118                Glycera capitata
+24   340879    Glycera capitata benguellana
+25   340885         Glycera capitata setosa
+26   328106                  Glycera carnea
+27   130119                 Glycera celtica
+28   336899               Glycera chilensis
+29   328107                 Glycera chirori
+30   328108              Glycera cinnamomea
+31   209808                 Glycera cirrata
+32   130120               Glycera convoluta
+33   340880      Glycera convoluta capensis
+34   340881 Glycera convoluta sevastopolica
+35   340882     Glycera convoluta suchumica
+36   146424      Glycera convoluta uncinata
+38   336900               Glycera corrugata
+39   336901                  Glycera danica
+40   130121                    Glycera dayi
+41   328109               Glycera decipiens
+42   336902                Glycera decorata
+43   328110          Glycera dentribranchia
+44   328111              Glycera derbyensis
+45   157392            Glycera dibranchiata
+46   336903                  Glycera diodon
+47   582415                    Glycera diva
+48   333498                   Glycera dubia
+49   336905                Glycera edentata
+50   336906                Glycera edwardsi
+51   336906                Glycera edwardsi
+52   328112                Glycera edwardsi
+53   328113                 Glycera ehlersi
+54   328114            Glycera embranchiata
+55   333499              Glycera epipolasis
+56   336907                  Glycera exigua
+57   336908                  Glycera fallax
+58   336909             Glycera folliculosa
+59   328115               Glycera fundicola
+60   328116              Glycera fusiformis
+61   130122                Glycera gigantea
+62   328117               Glycera gilbertae
+63   328118        Glycera glaucopsammensis
+64   336910                   Glycera goesi
+65   328119           Glycera guatemalensis
+66   328120               Glycera guinensis
+67   328121            Glycera hasidatensis
+68   328122              Glycera heteropoda
+69   328123                 Glycera incerta
+70   336911                 Glycera jucunda
+71   605410                  Glycera juliae
+72   173369            Glycera kerguelensis
+73   328124                   Glycera knoxi
+74   336912                Glycera koehleri
+75   336913                Glycera kraussii
+76   336914                  Glycera laevis
+77   328125           Glycera lamelliformis
+78   328126            Glycera lamellipodia
+79   209813              Glycera lancadivae
+80   130123                 Glycera lapidum
+82   209811             Glycera longipinnis
+83   333500              Glycera longissima
+84   328127              Glycera macintoshi
+85   606086           Glycera macrobranchia
+86   336915              Glycera macrorhiza
+87   328128        Glycera madagascariensis
+88   328129                 Glycera manorae
+89   328130               Glycera martensii
+90   328131              Glycera mauritiana
+91   336916                Glycera meckelii
+92   336917                 Glycera mesnili
+93   333501                Glycera mexicana
+94   336918              Glycera microdonta
+95   333502             Glycera micrognatha
+96   130124                  Glycera mimica
+97   130129                   Glycera minor
+98   130125                  Glycera minuta
+99   340883    Glycera minuta sevastopolica
+100  340884        Glycera minuta suchumica
+101  336919             Glycera misakiensis
+102  336920                   Glycera mitis
+103  336921                 Glycera monodon
+104  336922                Glycera muelleri
+105  328132                    Glycera nana
+106  328133              Glycera natalensis
+107  588410              Glycera neorobusta
+108  333503              Glycera nicobarica
+109  336923              Glycera nicobarica
+110  328134                Glycera nigripes
+111  595269                  Glycera noelae
+112  588415                    Glycera okai
+113  328135           Glycera onomichiensis
+114  336924       Glycera opisthobranchiata
+115  328136              Glycera orientalis
+116  336925                 Glycera ovigera
+117  130126              Glycera oxycephala
+118  328137                Glycera pacifica
+119  157393               Glycera papillosa
+120  336946               Glycera peruviana
+121  328138                 Glycera pilicae
+122  328139                Glycera polygona
+123  328140         Glycera posterobranchia
+124  209810                Glycera prashadi
+125  328141                Glycera profundi
+126  328142           Glycera prosobranchia
+127  328143           Glycera pseudorobusta
+128  336926             Glycera retractilis
+129  157394                 Glycera robusta
+130  336927                   Glycera rosea
+131  183173                   Glycera rouxi
+132  130127                  Glycera rouxii
+133  336928                  Glycera rugosa
+134  328144                   Glycera russa
+135  328145                Glycera rutilans
+136  336929           Glycera saccibranchis
+137  336930             Glycera sagittariae
+138  336931             Glycera sagittariae
+139  588417        Glycera semibranchiopoda
+140  336932                  Glycera setosa
+141  336933                 Glycera simplex
+142  468029            Glycera siphonostoma
+143  582416      Glycera southeastatlantica
+144  328146                  Glycera spadix
+145  157395           Glycera sphyrabrancha
+146  209812                Glycera subaenea
+147  328147           Glycera taprobanensis
+148  328148                 Glycera taurica
+149 1362572             Glycera tenuicornis
+150  328149                  Glycera tenuis
+151  130128               Glycera tesselata
+152  335461         Glycera tesselata minor
+153  130130              Glycera tridactyla
+154  130131               Glycera unicornis
+155  336934              Glycera verdescens
+156  240573             Glycera viridescens
+37   155109                            &lt;NA&gt;
+81   155036                            &lt;NA&gt;
+                              authority       status
+1                         Lamarck, 1818     accepted
+2                         Haswell, 1879   unaccepted
+3                       Treadwell, 1901   unaccepted
+4                       Arwidsson, 1899     accepted
+5                   (O.F. Müller, 1776)     accepted
+6                          Fauvel, 1939     accepted
+7                        Southern, 1921     accepted
+8                           Moore, 1911   unaccepted
+9                     Quatrefages, 1850   unaccepted
+10                        Imajima, 2003     accepted
+11                       McIntosh, 1885     accepted
+12                          Leidy, 1855     accepted
+13                            Day, 1973     accepted
+14                       Eisenack, 1939     accepted
+15                     Chamberlin, 1919   unaccepted
+16              Böggemann &amp; Fiege, 2001     accepted
+17                        Augener, 1931     accepted
+18              Böggemann &amp; Fiege, 2001     accepted
+19                    Quatrefages, 1866   unaccepted
+20                          Moore, 1911     accepted
+21                          Grube, 1870     accepted
+22              Hartmann-Schröder, 1962     accepted
+23                         Örsted, 1843     accepted
+24                        Augener, 1931   unaccepted
+25                         Örsted, 1843   unaccepted
+26               Blanchard in Gay, 1849     accepted
+27                       O'Connor, 1987     accepted
+28                      Arwidsson, 1899   unaccepted
+29                          Izuka, 1912     accepted
+30                          Grube, 1874     accepted
+31                          Grube, 1857   unaccepted
+32                     Keferstein, 1862   unaccepted
+33                          Monro, 1933   unaccepted
+34                    Czerniavsky, 1881   unaccepted
+35                    Czerniavsky, 1881   unaccepted
+36                          Rioja, 1918   unaccepted
+38                          Baird, 1863   unaccepted
+39                    Quatrefages, 1866   unaccepted
+40                       O'Connor, 1987   unaccepted
+41                    Marenzeller, 1879     accepted
+42                    Quatrefages, 1866   unaccepted
+43                            Lee, 1985     accepted
+44              Hartmann-Schröder, 1979     accepted
+45                         Ehlers, 1868     accepted
+46                       Schmarda, 1861   unaccepted
+47                      Böggemann, 2009     accepted
+48                   (Blainville, 1825)     accepted
+49                         Hansen, 1882   unaccepted
+50                        Gravier, 1906   unaccepted
+51                        Gravier, 1906   unaccepted
+52                        Gravier, 1900   unaccepted
+53                      Arwidsson, 1899     accepted
+54                 Krishnamoorthi, 1962     accepted
+55                   (Chamberlin, 1919)   unaccepted
+56                     Chamberlin, 1919   unaccepted
+57                    Quatrefages, 1850     accepted
+58                         Ehlers, 1868   unaccepted
+59                     Chamberlin, 1919     accepted
+60                        Fischli, 1900   unaccepted
+61                    Quatrefages, 1866   unaccepted
+62              Böggemann &amp; Fiege, 2001     accepted
+63              Charletta &amp; Boyer, 1974     accepted
+64                       Malmgren, 1867   unaccepted
+65              Böggemann &amp; Fiege, 2001     accepted
+66                        Augener, 1918     accepted
+67                          Izuka, 1912     accepted
+68              Hartmann-Schröder, 1962     accepted
+69                         Hansen, 1882     accepted
+70                        Kinberg, 1866   unaccepted
+71              Magalhaes &amp; Rizzo, 2012     accepted
+72                       McIntosh, 1885     accepted
+73                     Kirkegaard, 1995     accepted
+74                          Roule, 1896   unaccepted
+75                       Stimpson, 1856   unaccepted
+76                        Kinberg, 1866   unaccepted
+77                       McIntosh, 1885     accepted
+78                           Knox, 1960   unaccepted
+79                       Schmarda, 1861     accepted
+80                    Quatrefages, 1866     accepted
+82                          Grube, 1878     accepted
+83                      Arwidsson, 1899     accepted
+84                          Grube, 1877     accepted
+85                          Moore, 1911     accepted
+86                       Schmarda, 1861   unaccepted
+87              Böggemann &amp; Fiege, 2001     accepted
+88                         Fauvel, 1932   unaccepted
+89                          Grube, 1870   unaccepted
+90                          Grube, 1870     accepted
+91        Audouin &amp; Milne Edwards, 1833   unaccepted
+92                   Saint-Joseph, 1898   unaccepted
+93                   (Chamberlin, 1919)     accepted
+94                       Schmarda, 1861   unaccepted
+95                       Schmarda, 1861     accepted
+96                        Hartman, 1965   unaccepted
+97                       La Greca, 1946     accepted
+98                    (Bobretzky, 1870)   unaccepted
+99                    Czerniavsky, 1881   unaccepted
+100                   Czerniavsky, 1881   unaccepted
+101                         Izuka, 1912   unaccepted
+102                      Johnston, 1865   unaccepted
+103                      Schmarda, 1861   unaccepted
+104                   Quatrefages, 1866   unaccepted
+105                       Johnson, 1901     accepted
+106                           Day, 1957     accepted
+107                       Imajima, 2009     accepted
+108                         Grube, 1868     accepted
+109                         Grube, 1866   unaccepted
+110                      Johnston, 1865   unaccepted
+111 Böggemann, Bienhold &amp; Gaudron, 2012     accepted
+112                       Imajima, 2009     accepted
+113                         Izuka, 1912     accepted
+114                   Marenzeller, 1879   unaccepted
+115                   Buzhinskaja, 1993   unaccepted
+116                      Schmarda, 1861     accepted
+117                        Ehlers, 1887     accepted
+118                       Kinberg, 1866     accepted
+119                         Grube, 1857     accepted
+120                   Quatrefages, 1866   unaccepted
+121                    Szaniawski, 1974     accepted
+122                         Risso, 1826     accepted
+123                      Hoagland, 1920     accepted
+124                        Fauvel, 1932   unaccepted
+125                    Chamberlin, 1919     accepted
+126             Böggemann &amp; Fiege, 2001     accepted
+127             Böggemann &amp; Fiege, 2001     accepted
+128                   Quatrefages, 1866   unaccepted
+129                        Ehlers, 1868     accepted
+130     Blainville in Quatrefages, 1866   unaccepted
+131                [auctt. misspelling]   unaccepted
+132       Audouin &amp; Milne Edwards, 1833   unaccepted
+133                       Johnson, 1901   unaccepted
+134                         Grube, 1870     accepted
+135             Grube in McIntosh, 1885     accepted
+136                         Grube, 1878   unaccepted
+137                        Fauvel, 1932   unaccepted
+138                      McIntosh, 1885     accepted
+139                       Imajima, 2009     accepted
+140                        Örsted, 1843   unaccepted
+141                         Grube, 1857   unaccepted
+142                (Delle Chiaje, 1827) nomen dubium
+143                     Böggemann, 2009     accepted
+144                     Treadwell, 1943   unaccepted
+145                      Schmarda, 1861     accepted
+146                         Grube, 1878     accepted
+147                      De Silva, 1965   unaccepted
+148                   Czerniavsky, 1881     accepted
+149                       Haswell, 1879   unaccepted
+150                       Hartman, 1944     accepted
+151                         Grube, 1863     accepted
+152                      La Greca, 1946     accepted
+153                      Schmarda, 1861     accepted
+154                       Lamarck, 1818     accepted
+155                    Chamberlin, 1919   unaccepted
+156                      Stimpson, 1854   unaccepted
+37                                 &lt;NA&gt;      deleted
+81                                 &lt;NA&gt;      deleted</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5Nb3JlIHRoYW4gb25lIFdPUk1TIElEIGZvdW5kIGZvciB0YXhvbiAnR2x5Y2VyYSchXG5cbiAgICAgICAgICAgICAgICAgIEVudGVyIHJvd251bWJlciBvZiB0YXhvbiAob3RoZXIgaW5wdXRzIHdpbGwgcmV0dXJuICdOQScpOlxuXG5cblJldHVybmVkICdOQSchXG4ifQ== -->
+<pre><code>
+More than one WORMS ID found for taxon 'Glycera'!
+
+                  Enter rownumber of taxon (other inputs will return 'NA'):
+
+
+Returned 'NA'!</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgR2x5Y2VyYVxuPT0gIFJlc3VsdHMgID09PT09PT09PT09PT09PT09XG5cbiogVG90YWw6IDEgXG4qIEZvdW5kOiAwIFxuKiBOb3QgRm91bmQ6IDFcbj09ICAxIHF1ZXJpZXMgID09PT09PT09PT09PT09PVxuIn0= -->
+<pre><code>x  Not Found:  Glycera
 ==  Results  =================
 
 * Total: 1 
@@ -729,25 +1055,22 @@ Retrieving data for taxon 'hesionid'</code></pre>
 14 accepted
 15 accepted</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5Nb3JlIHRoYW4gb25lIFdPUk1TIElEIGZvdW5kIGZvciB0YXhvbiAnaGVzaW9uaWQnIVxuXG4gICAgICAgICAgICAgICAgICBFbnRlciByb3dudW1iZXIgb2YgdGF4b24gKG90aGVyIGlucHV0cyB3aWxsIHJldHVybiAnTkEnKTpcbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5Nb3JlIHRoYW4gb25lIFdPUk1TIElEIGZvdW5kIGZvciB0YXhvbiAnaGVzaW9uaWQnIVxuXG4gICAgICAgICAgICAgICAgICBFbnRlciByb3dudW1iZXIgb2YgdGF4b24gKG90aGVyIGlucHV0cyB3aWxsIHJldHVybiAnTkEnKTpcblxuXG5SZXR1cm5lZCAnTkEnIVxuIn0= -->
 <pre><code>
 More than one WORMS ID found for taxon 'hesionid'!
 
-                  Enter rownumber of taxon (other inputs will return 'NA'):</code></pre>
+                  Enter rownumber of taxon (other inputs will return 'NA'):
+
+
+Returned 'NA'!</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuMVxuYGBgIn0= -->
-<pre class="r"><code>1</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSW5wdXQgYWNjZXB0ZWQsIHRvb2sgdGF4b24gJ0hlc2lvbmlkYWUnLlxuIn0= -->
-<pre><code>Input accepted, took taxon 'Hesionidae'.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoi4oiaICBGb3VuZDogIGhlc2lvbmlkXG49PSAgUmVzdWx0cyAgPT09PT09PT09PT09PT09PT1cblxuKiBUb3RhbDogMSBcbiogRm91bmQ6IDEgXG4qIE5vdCBGb3VuZDogMFxuPT0gIDEgcXVlcmllcyAgPT09PT09PT09PT09PT09XG4ifQ== -->
-<pre><code>v  Found:  hesionid
+<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgaGVzaW9uaWRcbj09ICBSZXN1bHRzICA9PT09PT09PT09PT09PT09PVxuXG4qIFRvdGFsOiAxIFxuKiBGb3VuZDogMCBcbiogTm90IEZvdW5kOiAxXG49PSAgMSBxdWVyaWVzICA9PT09PT09PT09PT09PT1cbiJ9 -->
+<pre><code>x  Not Found:  hesionid
 ==  Results  =================
 
 * Total: 1 
-* Found: 1 
-* Not Found: 0
+* Found: 0 
+* Not Found: 1
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICc/SXBoaW9uZWxsYSByaXNlbnNpcydcbiJ9 -->
@@ -776,43 +1099,43 @@ Retrieving data for taxon 'Laminatubus alvini'</code></pre>
 * Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdMZXBpZG9ub3RvcG9kaXVtICdcbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdMZXBpZG9ub3RvcG9kaXVtJ1xuIn0= -->
 <pre><code>
-Retrieving data for taxon 'Lepidonotopodium '</code></pre>
+Retrieving data for taxon 'Lepidonotopodium'</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgTGVwaWRvbm90b3BvZGl1bSBcbj09ICBSZXN1bHRzICA9PT09PT09PT09PT09PT09PVxuXG4qIFRvdGFsOiAxIFxuKiBGb3VuZDogMCBcbiogTm90IEZvdW5kOiAxXG49PSAgMSBxdWVyaWVzICA9PT09PT09PT09PT09PT1cbiJ9 -->
-<pre><code>x  Not Found:  Lepidonotopodium 
+<!-- rnb-output-begin eyJkYXRhIjoi4oiaICBGb3VuZDogIExlcGlkb25vdG9wb2RpdW1cbj09ICBSZXN1bHRzICA9PT09PT09PT09PT09PT09PVxuXG4qIFRvdGFsOiAxIFxuKiBGb3VuZDogMSBcbiogTm90IEZvdW5kOiAwXG49PSAgMSBxdWVyaWVzICA9PT09PT09PT09PT09PT1cbiJ9 -->
+<pre><code>v  Found:  Lepidonotopodium
 ==  Results  =================
 
 * Total: 1 
-* Found: 0 
-* Not Found: 1
+* Found: 1 
+* Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdOZXJlaXMgJ1xuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdOZXJlaXMnXG4ifQ== -->
 <pre><code>
-Retrieving data for taxon 'Nereis '</code></pre>
+Retrieving data for taxon 'Nereis'</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgTmVyZWlzIFxuPT0gIFJlc3VsdHMgID09PT09PT09PT09PT09PT09XG5cbiogVG90YWw6IDEgXG4qIEZvdW5kOiAwIFxuKiBOb3QgRm91bmQ6IDFcbj09ICAxIHF1ZXJpZXMgID09PT09PT09PT09PT09PVxuIn0= -->
-<pre><code>x  Not Found:  Nereis 
+<!-- rnb-output-begin eyJkYXRhIjoi4oiaICBGb3VuZDogIE5lcmVpc1xuPT0gIFJlc3VsdHMgID09PT09PT09PT09PT09PT09XG5cbiogVG90YWw6IDEgXG4qIEZvdW5kOiAxIFxuKiBOb3QgRm91bmQ6IDBcbj09ICAxIHF1ZXJpZXMgID09PT09PT09PT09PT09PVxuIn0= -->
+<pre><code>v  Found:  Nereis
 ==  Results  =================
 
 * Total: 1 
-* Found: 0 
-* Not Found: 1
+* Found: 1 
+* Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdOaWNvbWFjaGUgJ1xuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdOaWNvbWFjaGUnXG4ifQ== -->
 <pre><code>
-Retrieving data for taxon 'Nicomache '</code></pre>
+Retrieving data for taxon 'Nicomache'</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgTmljb21hY2hlIFxuPT0gIFJlc3VsdHMgID09PT09PT09PT09PT09PT09XG5cbiogVG90YWw6IDEgXG4qIEZvdW5kOiAwIFxuKiBOb3QgRm91bmQ6IDFcbj09ICAxIHF1ZXJpZXMgID09PT09PT09PT09PT09PVxuIn0= -->
-<pre><code>x  Not Found:  Nicomache 
+<!-- rnb-output-begin eyJkYXRhIjoi4oiaICBGb3VuZDogIE5pY29tYWNoZVxuPT0gIFJlc3VsdHMgID09PT09PT09PT09PT09PT09XG5cbiogVG90YWw6IDEgXG4qIEZvdW5kOiAxIFxuKiBOb3QgRm91bmQ6IDBcbj09ICAxIHF1ZXJpZXMgID09PT09PT09PT09PT09PVxuIn0= -->
+<pre><code>v  Found:  Nicomache
 ==  Results  =================
 
 * Total: 1 
-* Found: 0 
-* Not Found: 1
+* Found: 1 
+* Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdPcGhyeW90cm9jaGEgYWtlc3NvbmknXG4ifQ== -->
@@ -880,12 +1203,12 @@ Retrieving data for taxon 'polynoids, unk'</code></pre>
 * Not Found: 1
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdwb2x5Y2hhZXRlcywgdW5rICdcbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdwb2x5Y2hhZXRlcywgdW5rJ1xuIn0= -->
 <pre><code>
-Retrieving data for taxon 'polychaetes, unk '</code></pre>
+Retrieving data for taxon 'polychaetes, unk'</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgcG9seWNoYWV0ZXMsIHVuayBcbj09ICBSZXN1bHRzICA9PT09PT09PT09PT09PT09PVxuXG4qIFRvdGFsOiAxIFxuKiBGb3VuZDogMCBcbiogTm90IEZvdW5kOiAxXG49PSAgMSBxdWVyaWVzICA9PT09PT09PT09PT09PT1cbiJ9 -->
-<pre><code>x  Not Found:  polychaetes, unk 
+<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgcG9seWNoYWV0ZXMsIHVua1xuPT0gIFJlc3VsdHMgID09PT09PT09PT09PT09PT09XG5cbiogVG90YWw6IDEgXG4qIEZvdW5kOiAwIFxuKiBOb3QgRm91bmQ6IDFcbj09ICAxIHF1ZXJpZXMgID09PT09PT09PT09PT09PVxuIn0= -->
+<pre><code>x  Not Found:  polychaetes, unk
 ==  Results  =================
 
 * Total: 1 
@@ -1049,12 +1372,12 @@ Retrieving data for taxon 'shrimp, juvenile'</code></pre>
 * Not Found: 1
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICd3b3JtLCB1bnNlZ21lbnRlZCAnXG4ifQ== -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICd3b3JtLCB1bnNlZ21lbnRlZCdcbiJ9 -->
 <pre><code>
-Retrieving data for taxon 'worm, unsegmented '</code></pre>
+Retrieving data for taxon 'worm, unsegmented'</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgd29ybSwgdW5zZWdtZW50ZWQgXG49PSAgUmVzdWx0cyAgPT09PT09PT09PT09PT09PT1cblxuKiBUb3RhbDogMSBcbiogRm91bmQ6IDAgXG4qIE5vdCBGb3VuZDogMVxuPT0gIDEgcXVlcmllcyAgPT09PT09PT09PT09PT09XG4ifQ== -->
-<pre><code>x  Not Found:  worm, unsegmented 
+<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgd29ybSwgdW5zZWdtZW50ZWRcbj09ICBSZXN1bHRzICA9PT09PT09PT09PT09PT09PVxuXG4qIFRvdGFsOiAxIFxuKiBGb3VuZDogMCBcbiogTm90IEZvdW5kOiAxXG49PSAgMSBxdWVyaWVzICA9PT09PT09PT09PT09PT1cbiJ9 -->
+<pre><code>x  Not Found:  worm, unsegmented
 ==  Results  =================
 
 * Total: 1 
@@ -1209,17 +1532,17 @@ Retrieving data for taxon 'Abyssotherma pacifica'</code></pre>
 * Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdNZXRhZm9sbGljdWxpbmEgJ1xuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdNZXRhZm9sbGljdWxpbmEnXG4ifQ== -->
 <pre><code>
-Retrieving data for taxon 'Metafolliculina '</code></pre>
+Retrieving data for taxon 'Metafolliculina'</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoieCAgTm90IEZvdW5kOiAgTWV0YWZvbGxpY3VsaW5hIFxuPT0gIFJlc3VsdHMgID09PT09PT09PT09PT09PT09XG5cbiogVG90YWw6IDEgXG4qIEZvdW5kOiAwIFxuKiBOb3QgRm91bmQ6IDFcbj09ICAxIHF1ZXJpZXMgID09PT09PT09PT09PT09PVxuIn0= -->
-<pre><code>x  Not Found:  Metafolliculina 
+<!-- rnb-output-begin eyJkYXRhIjoi4oiaICBGb3VuZDogIE1ldGFmb2xsaWN1bGluYVxuPT0gIFJlc3VsdHMgID09PT09PT09PT09PT09PT09XG5cbiogVG90YWw6IDEgXG4qIEZvdW5kOiAxIFxuKiBOb3QgRm91bmQ6IDBcbj09ICAxIHF1ZXJpZXMgID09PT09PT09PT09PT09PVxuIn0= -->
+<pre><code>v  Found:  Metafolliculina
 ==  Results  =================
 
 * Total: 1 
-* Found: 0 
-* Not Found: 1
+* Found: 1 
+* Not Found: 0
 ==  1 queries  ===============</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiXG5SZXRyaWV2aW5nIGRhdGEgZm9yIHRheG9uICdvdGhlciBmb3JhbXMnXG4ifQ== -->
@@ -1310,14 +1633,16 @@ for (i in 1:length(taxon_data$scientificName)) {
 <p>retrieve and fill in taxonRank from AphiaID</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZm9yIChpIGluIDE6bGVuZ3RoKHRheG9uX2RhdGEkZGF0YVByb3ZpZGVyX05hbWUpKSB7XG4gIGlmICgoIWdyZXBsKFwiW14wLTldXCIsIHRheG9uX2RhdGEkQXBoaWFJRFtpXSkpPT1UUlVFKSB7ICNpZiAkQXBoaWFJRCBjb250YWlucyBvbmx5IG51bWJlcnMsXG4gICAgdGF4b25fZGF0YSR0YXhvblJhbmtbaV08LXRheF9yYW5rKHRheG9uX2RhdGEkQXBoaWFJRFtpXSwgZGI9XCJ3b3Jtc1wiKVxuICB9ICNyZXRyaWV2ZSBhbmQgcGFzdGUgdGF4b24gcmFua1xuICBlbHNlIFxuICAgIHRheG9uX2RhdGEkdGF4b25SYW5rW2ldPC1wYXN0ZShcImNhbm5vdCByZXRyaWV2ZSB0YXhvbm9taWMgcmFuayAtIG5vIHZhbGlkIEFwaGlhSURcIikgICNvdGhlcndpc2UsIHBhc3RlIGVycm9yIG1lc3NhZ2Vcbn1cbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZm9yIChpIGluIDE6bGVuZ3RoKHRheG9uX2RhdGEkZGF0YVByb3ZpZGVyX05hbWUpKSB7XG4gIGlmICgoIWdyZXBsKFwiW14wLTldXCIsIHRheG9uX2RhdGEkQXBoaWFJRFtpXSkpPT1UUlVFKSB7ICNpZiBBcGhpYUlEIGNvbnRhaW5zIG9ubHkgbnVtYmVycyAoaWUgaXMganVzdCB0aGUgQXBoaWFJRCBudW1iZXIsIG5vdCBhbiBlcnJvciksXG4gICAgdGF4b25fZGF0YSR0YXhvblJhbmtbaV08LXRheF9yYW5rKHRheG9uX2RhdGEkQXBoaWFJRFtpXSwgZGI9XCJ3b3Jtc1wiKVxuICB9ICNyZXRyaWV2ZSBhbmQgcGFzdGUgdGF4b24gcmFua1xuICBlbHNlIFxuICAgIHRheG9uX2RhdGEkdGF4b25SYW5rW2ldPC1wYXN0ZShcImNhbm5vdCByZXRyaWV2ZSB0YXhvbm9taWMgcmFuayAtIG5vIHZhbGlkIEFwaGlhSURcIikgICNvdGhlcndpc2UsIHBhc3RlIGVycm9yIG1lc3NhZ2Vcbn1cbiN0aGUgYWJvdmUgcmVzdWx0cyBpbiB0YXhvblJhbmsgYmVpbmcgYSBsaXN0OyBzZXQgdG8gY2hhcmFjdGVyIGZvciBleHBvcnRpbmdcbnRheG9uX2RhdGEkdGF4b25SYW5rPC1hcy5jaGFyYWN0ZXIodGF4b25fZGF0YSR0YXhvblJhbmspIFxuYGBgIn0= -->
 <pre class="r"><code>for (i in 1:length(taxon_data$dataProvider_Name)) {
-  if ((!grepl(&quot;[^0-9]&quot;, taxon_data$AphiaID[i]))==TRUE) { #if $AphiaID contains only numbers,
+  if ((!grepl(&quot;[^0-9]&quot;, taxon_data$AphiaID[i]))==TRUE) { #if AphiaID contains only numbers (ie is just the AphiaID number, not an error),
     taxon_data$taxonRank[i]&lt;-tax_rank(taxon_data$AphiaID[i], db=&quot;worms&quot;)
   } #retrieve and paste taxon rank
   else 
     taxon_data$taxonRank[i]&lt;-paste(&quot;cannot retrieve taxonomic rank - no valid AphiaID&quot;)  #otherwise, paste error message
-}</code></pre>
+}
+#the above results in taxonRank being a list; set to character for exporting
+taxon_data$taxonRank&lt;-as.character(taxon_data$taxonRank) </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1344,12 +1669,15 @@ for (i in 1:length(taxon_data$scientificName)) {
 <p>output current chart as csv</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxud3JpdGUuY3N2KHRheG9uX2RhdGEsXCJvdXRwdXRfZGVtb19tb2RpZmllZF9mb3JMYXVyZW5NLmNzdlwiKVxuYGBgIn0= -->
-<pre class="r"><code>write.csv(taxon_data,&quot;output_demo_modified_forLaurenM.csv&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3JlbW92ZSB1bndhbnRlZCBjb2x1bW5zXG50YXhvbl9kYXRhX0R3Qzwtc3Vic2V0KHRheG9uX2RhdGEsc2VsZWN0PS1jKEFwaGlhSUQsZGF0YVByb3ZpZGVyX05hbWUscHJvdmlkZXJfc2NpTmFtZV9tYXRjaCxpZGVudGlmaWNhdGlvblJlbWFya3MpKVxuI3dyaXRlIGNzdlxud3JpdGUuY3N2KHRheG9uX2RhdGFfRHdDLFwib3V0cHV0X2RlbW9fbW9kaWZpZWRfZm9yTGF1cmVuTS5jc3ZcIilcbmBgYCJ9 -->
+<pre class="r"><code>#remove unwanted columns
+taxon_data_DwC&lt;-subset(taxon_data,select=-c(AphiaID,dataProvider_Name,provider_sciName_match,identificationRemarks))
+#write csv
+write.csv(taxon_data_DwC,&quot;output_demo_modified_forLaurenM.csv&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRlbW9fbW9kaWZpZWRfTGF1cmVuIg0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCkxpYnJhcmllcw0KYGBge3J9DQpwYWNrYWdlX2xpc3Q8LWMoInRheGl6ZSIsDQogICAgICAgICAgICAgICAgIndvcnJtcyIsDQogICAgICAgICAgICAgICAgInRpZHlyIiwNCiAgICAgICAgICAgICAgICAiZHBseXIiLA0KICAgICAgICAgICAgICAgICJ0aWJibGUiLA0KICAgICAgICAgICAgICAgICJvcGVueGxzeCIpDQojaW5zdGFsbC5wYWNrYWdlcygidGF4aXplIikgI2luc3RhbGwgcGFja2FnZXMgYXMgbmVjZXNzYXJ5DQojaW5zdGFsbC5wYWNrYWdlcygidGlkeXIiKSAjICINCiNpbnN0YWxsLnBhY2thZ2VzKCJkcGx5ciIpICMgIg0KI2luc3RhbGwucGFja2FnZXMoInRpYmJsZSIpICMgIg0KI2luc3RhbGwucGFja2FnZXMoIm9wZW54bHN4IikNCmZvciAoaSBpbiBwYWNrYWdlX2xpc3QpIHsNCiAgbGlicmFyeShpLCBjaGFyYWN0ZXIub25seSA9IFRSVUUpDQp9DQpgYGANCg0KTG9hZCBkYXRhDQpgYGB7cn0NCnNldHdkKCJDOlxcVXNlcnNcXERhbGVcXERlc2t0b3AiKSAjZmlsZSBsb2NhdGlvbg0KaW5pdGlhbDwtcmVhZC54bHN4KCJQdmVudF9QJlNfMTM1X3N1cHB0YWJsZTFfdjIueGxzeCIsIHNoZWV0PTEsIHN0YXJ0Um93PTYsIGNvbE5hbWVzPUZBTFNFKSAjZmlsZSBuYW1lOyBza2lwIGZpcnN0IDUgcm9sZXMsIHdoaWNoIGFyZW4ndCBzcGVjaWVzIG5hbWVzDQpgYGANCg0KDQpjcmVhdGUgZGF0YWZyYW1lIGZvciBkZXNpcmVkIHRheG9uIGNvbHVtbnM7IHdpbGwgcmVtb3ZlIG5vbi1EYXJ3aW4gQ29yZSBvbmVzIGxhdGVyDQpgYGB7cn0NCnRheG9uX2RhdGE8LWRhdGEuZnJhbWUobWF0cml4KG5jb2w9Nyxucm93PWxlbmd0aChpbml0aWFsJFgxKSkpDQpjb2x1bW5fbmFtZXM8LWMoIkFwaGlhSUQiLCJwaHlsdW0iLCJkYXRhUHJvdmlkZXJfTmFtZSIsInNjaWVudGlmaWNOYW1lIiwic2NpZW50aWZpY05hbWVJRCIsImlkZW50aWZpY2F0aW9uUmVtYXJrcyIsInRheG9uUmFuayIpDQpjb2xuYW1lcyh0YXhvbl9kYXRhKTwtY29sdW1uX25hbWVzDQp0YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lPC1pbml0aWFsJFgxDQpgYGANCg0Kc3BsaXQgb3V0ICJzcC4iICBhbmQgInNwcC4iIG91dA0KYGBge3J9DQp0YXhvbl9kYXRhJGlkZW50aWZpY2F0aW9uUmVtYXJrc1tjKGdyZXAoInNwXFwuIix0YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lKSldPC0ic3AuIiAjcHV0IHNwLiBpbiB3aGVuIGluIGRhdGFhUHJvdmlkZXJfTmFtZQ0KDQp0YXhvbl9kYXRhJGlkZW50aWZpY2F0aW9uUmVtYXJrc1tjKGdyZXAoInNwcFxcLiIsdGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZSkpXTwtInNwcC4iICNwdXQgc3BwLiAiDQoNCnRheG9uX2RhdGEkZGF0YVByb3ZpZGVyX05hbWU8LSBnc3ViKCJzcFxcLiIsIiIsdGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZSkNCg0KdGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZTwtIGdzdWIoInNwcFxcLiIsIiIsdGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZSkNCg0KYGBgDQoNClRyeSB0byBnZXQgQXBoaWFJRCBmcm9tIGRhdGFQcm92aWRlcl9OYW1lDQpgYGB7cn0NCiNyZW1vdmUgcm93cyB0aGF0IGFyZSBlbnRpcmVseSBOQQ0KdGF4b25fZGF0YTwtIHRheG9uX2RhdGEgJT4lIGRyb3BfbmEoZGF0YVByb3ZpZGVyX05hbWUpDQogIA0KZm9yIChpIGluIDE6bGVuZ3RoKHRheG9uX2RhdGEkZGF0YVByb3ZpZGVyX05hbWUpKSB7DQogIHdvcm1zX3Jlc3VsdHM8LWdldF93b3Jtc2lkKHRheG9uX2RhdGEkZGF0YVByb3ZpZGVyX05hbWVbaV0pDQogIHdvcm1zX3Jlc3VsdHM8LXdvcm1zX3Jlc3VsdHNbWzFdXQ0KICAgIGlmIChpc1RSVUUod29ybXNfcmVzdWx0cz4wKSA9PSBUUlVFKSB7DQogICAgICB0YXhvbl9kYXRhJEFwaGlhSURbaV08LXdvcm1zX3Jlc3VsdHMNCiAgICB9DQogICAgZWxzZQ0KICAgICAgdGF4b25fZGF0YSRBcGhpYUlEW2ldPC1wYXN0ZSgiRXJyb3I6IG5vIEFwaGlhSUQgZm9yIGRhdGFQcm92aWRlcl9OYW1lIHZhbHVlIGluIHJvdyIsaSxzZXA9IiAiKQ0KfQ0KDQojc29tZSBvZiB0aGVzZSByZXN1bHQgaW4gbXVsdGlwbGUgcm93czsgd2hlbiBpdCBjb21lcyB1cCBpbiB0aGUgY29uc29sZSBhc2tpbmcgeW91IHRvIHNlbGVjdCBhIHJvdywgMSBpcyB1c3VhbGx5IHRoZSBiZXN0IGNob2ljZTsgaG93ZXZlciwgZm9yIHNvbWUgcmVhc29uLCBzZXR0aW5nIHJvd3M9MSBpbiBnZXRfd29ybXNpZCgpIHJlc3VsdHMgaW4gZXJyb3JzIGZvciBMZXBldG9kcmlsdXMNCg0KI3RoaXMgbWFrZSB0YWtlIGEgd2hpbGUNCmBgYA0KDQpmaWxsIGluIHNjaWVudGlmaWNOYW1lIGZyb20gQXBoaWFJRA0KYGBge3J9DQpmb3IgKGkgaW4gMTpsZW5ndGgodGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZSkpIHsNCiAgaWYgKCghZ3JlcGwoIlteMC05XSIsIHRheG9uX2RhdGEkQXBoaWFJRFtpXSkpPT1UUlVFKSB7ICNpZiAkQXBoaWFJRCBjb250YWlucyBvbmx5IG51bWJlcnMsDQogICAgdGF4b25fZGF0YSRzY2llbnRpZmljTmFtZVtpXTwtd21faWQybmFtZShhcy5udW1lcmljKHRheG9uX2RhdGEkQXBoaWFJRFtpXSkpDQogIH0gI3JldHJpZXZlIGFuZCBwYXN0ZSBzY2llbnRpZmljTmFtZSBmb3IgQXBoaWFJRCANCiAgZWxzZSANCiAgICB0YXhvbl9kYXRhJHNjaWVudGlmaWNOYW1lW2ldPC1wYXN0ZSgiY2Fubm90IGdldCBzY2llbnRpZmljTmFtZSBmcm9tIEFwaGlhSUQgLSBubyB2YWxpZCBBcGhpYUlEIikgICNvdGhlcndpc2UsIHBhc3RlIGVycm9yIG1lc3NhZ2UNCn0NCmBgYA0KDQpjaGVjayBpZiBBcGhpYUlEIC0+IHNjaWVudGlmaWNOYW1lIHZhbHVlIG1hdGNoZXMgdmFsdWUgZnJvbSBkYXRhIHByb3ZpZGVyDQpgYGB7cn0NCiNjcmVhdGUgY29sdW1uIHRvIGhvbGQgbWF0Y2gvbm9tYXRjaCBkYXRhDQp0YXhvbl9kYXRhPC1hZGRfY29sdW1uKHRheG9uX2RhdGEscHJvdmlkZXJfc2NpTmFtZV9tYXRjaD0iIiwuYWZ0ZXI9InNjaWVudGlmaWNOYW1lIikNCg0KI2NoZWNrIGlmIG1hdGNoLCB0b2xvd2VyKCkgaXMgdG8gYXZvaWQgbWlzbWF0Y2ggZHVlIHRvIGNhc2U7IHRydWUgbWVhbnMgdGhlIGNvbHVtbnMgZGF0YVByb3ZpZGVyX05hbWUgYW5kIHNjaWVudGlmaWNOYW1lIG1hdGNoLCBmYWxzZSBtZWFucyB0aGV5IGRvbid0DQpmb3IgKGkgaW4gMTpsZW5ndGgodGF4b25fZGF0YSRzY2llbnRpZmljTmFtZSkpIHsNCiAgdGF4b25fZGF0YSRwcm92aWRlcl9zY2lOYW1lX21hdGNoW2ldPC1pc1RSVUUodG9sb3dlcih0YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lW2ldKSA9PSB0b2xvd2VyKHRheG9uX2RhdGEkc2NpZW50aWZpY05hbWVbaV0pKQ0KfQ0KDQpgYGANCg0KRmlsbCBpbiBzY2llbnRpZmljTmFtZUlEIGZvciB0aG9zZSB3aXRoIG51bWVyaWMgdmFsdWVzIGluIEFwaGlhSUQ7IHVzaW5nIExTSURzDQpgYGB7cn0NCmZvciAoaSBpbiAxOmxlbmd0aCh0YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lKSkgew0KICBpZiAoKCFncmVwbCgiW14wLTldIiwgdGF4b25fZGF0YSRBcGhpYUlEW2ldKSk9PVRSVUUpIHsgI2lmICRBcGhpYUlEIGNvbnRhaW5zIG9ubHkgbnVtYmVycywNCiAgICB0YXhvbl9kYXRhJHNjaWVudGlmaWNOYW1lSURbaV08LXBhc3RlKCJ1cm46bHNpZDptYXJpbmVzcGVjaWVzLm9yZzp0YXhuYW1lOiIsdGF4b25fZGF0YSRBcGhpYUlEW2ldLHNlcD0iIikNCiAgfSAjYXNzZW1ibGUgTFNJRCANCiAgZWxzZSANCiAgICB0YXhvbl9kYXRhJHNjaWVudGlmaWNOYW1lSURbaV08LXBhc3RlKCJjYW5ub3QgY3JlYXRlIExTSUQgLSBubyB2YWxpZCBBcGhpYUlEIikgICNvdGhlcndpc2UsIHBhc3RlIGVycm9yIG1lc3NhZ2UNCn0NCmBgYA0KDQpyZXRyaWV2ZSBhbmQgZmlsbCBpbiB0YXhvblJhbmsgZnJvbSBBcGhpYUlEDQpgYGB7cn0NCmZvciAoaSBpbiAxOmxlbmd0aCh0YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lKSkgew0KICBpZiAoKCFncmVwbCgiW14wLTldIiwgdGF4b25fZGF0YSRBcGhpYUlEW2ldKSk9PVRSVUUpIHsgI2lmIEFwaGlhSUQgY29udGFpbnMgb25seSBudW1iZXJzLA0KICAgIHRheG9uX2RhdGEkdGF4b25SYW5rW2ldPC10YXhfcmFuayh0YXhvbl9kYXRhJEFwaGlhSURbaV0sIGRiPSJ3b3JtcyIpDQogIH0gI3JldHJpZXZlIGFuZCBwYXN0ZSB0YXhvbiByYW5rDQogIGVsc2UgDQogICAgdGF4b25fZGF0YSR0YXhvblJhbmtbaV08LXBhc3RlKCJjYW5ub3QgcmV0cmlldmUgdGF4b25vbWljIHJhbmsgLSBubyB2YWxpZCBBcGhpYUlEIikgICNvdGhlcndpc2UsIHBhc3RlIGVycm9yIG1lc3NhZ2UNCn0NCg0KI3RoZSBhYm92ZSByZXN1bHRzIGluIHRheG9uUmFuayBiZWluZyBhIGxpc3Q7IHNldCB0byBjaGFyYWN0ZXIgZm9yIGV4cG9ydGluZw0KdGF4b25fZGF0YSR0YXhvblJhbms8LWFzLmNoYXJhY3Rlcih0YXhvbl9kYXRhJHRheG9uUmFuaykgDQpgYGANCg0KcmV0cmlldmUgYW5kIGZpbGwgaW4gcGh5bHVtIGZyb20gQXBoaWFJRA0KYGBge3J9DQpmb3IgKGkgaW4gMTpsZW5ndGgodGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZSkpew0KICBpZiAoKCFncmVwbCgiW14wLTldIiwgdGF4b25fZGF0YSRBcGhpYUlEW2ldKSk9PVRSVUUpIHsNCiAgICAgIHRyZWU8LWNsYXNzaWZpY2F0aW9uKGFzLm51bWVyaWModGF4b25fZGF0YSRBcGhpYUlEW2ldKSwgZGI9J3dvcm1zJykgI2dldCB0YXhvbm9taWMgc3R1ZmYgZnJvbSBXb1JNUyBiYXNlZCBvbiBBcGhpYUlEDQogICAgICBkZl90cmVlPC1hcy5kYXRhLmZyYW1lKHRyZWVbWzFdXSkgI3Rha2UganVzdCB0aGUgbmFtZS9yYW5rL2lkIHBvcnRpb24sIGFzIGEgZGYsIGZyb20gY2xhc3NpZmljYXRpb24oKSBvdXRwdXQNCiAgICAgICAgaWYgKGxlbmd0aChkZl90cmVlJG5hbWVbKHdoaWNoKGRmX3RyZWUkcmFuaz09IlBoeWx1bSIpKV0pPT0wKSB7ICNzb21lIGFyZSBvbmx5IHRvIEFuaW1hbGlhLCBhbmQgc28gaGF2ZSBubyB2YWx1ZSBmb3IgcGh5bHVtIGluIHRoZSBvdXRwdXQgZnJvbSBjbGFzc2lmaWNhdGlvbigpOyBwdXQgIk5BIiBoZXJlLiBUaGlzIGlmL2Vsc2UgaGVscHMgcHJldmVudCB0aGUgZm9yIGxvb3AgZnJvbSB0aHJvd2luZyBhbiBlcnJvciBhbmQgc3RvcHBpbmcgd2hlbiBpdCBlbmNvdW50ZXJzIGEgY2xhc3NpZmljYXRpb24oKSBvdXRwdXQgdGhhdCBoYXMgbm8gcGh5bHVtDQogICAgICAgICAgICB0YXhvbl9kYXRhJHBoeWx1bVtpXTwtIk5BIg0KICAgICNwYXN0ZShjKCJlcnJvciByb3c6IixpLCIgQXBoaWFJRDoiLHRheG9uX2RhdGEkQXBoaWFJRFtpXSksIHNlcD0iIikNCiAgICAgICAgIH0NCiAgICAgICAgZWxzZQ0KICAgICAgICAgIHRheG9uX2RhdGEkcGh5bHVtW2ldPC1kZl90cmVlJG5hbWVbd2hpY2goZGZfdHJlZSRyYW5rID09ICJQaHlsdW0iKV0gI3NldCBuYW1lIG9mIHRoZSBwaHlsdW0gdG8gdGF4b25fZGF0YSRwaHlsdW0gdmFsdWUNCiAgfSBlbHNlDQogICAgICB0YXhvbl9kYXRhJHBoeWx1bVtpXTwtcGFzdGUoIm5vIHBoeWx1bSB2YWx1ZSBmb3IgaW52YWxpZCBBcGhpYUlEcyIpDQp9DQpgYGANCg0Kb3V0cHV0IGN1cnJlbnQgY2hhcnQgYXMgY3N2DQpgYGB7cn0NCndyaXRlLmNzdih0YXhvbl9kYXRhLCJvdXRwdXRfZGVtb19tb2RpZmllZF9mb3JMYXVyZW5NLmNzdiIpDQpgYGA=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRlbW9fbW9kaWZpZWRfTGF1cmVuIg0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCkxpYnJhcmllcw0KYGBge3J9DQpwYWNrYWdlX2xpc3Q8LWMoInRheGl6ZSIsDQogICAgICAgICAgICAgICAgIndvcnJtcyIsDQogICAgICAgICAgICAgICAgInRpZHlyIiwNCiAgICAgICAgICAgICAgICAiZHBseXIiLA0KICAgICAgICAgICAgICAgICJ0aWJibGUiLA0KICAgICAgICAgICAgICAgICJvcGVueGxzeCIpDQojaW5zdGFsbC5wYWNrYWdlcygidGF4aXplIikgI2luc3RhbGwgcGFja2FnZXMgYXMgbmVjZXNzYXJ5DQojaW5zdGFsbC5wYWNrYWdlcygidGlkeXIiKSAjICINCiNpbnN0YWxsLnBhY2thZ2VzKCJkcGx5ciIpICMgIg0KI2luc3RhbGwucGFja2FnZXMoInRpYmJsZSIpICMgIg0KI2luc3RhbGwucGFja2FnZXMoIm9wZW54bHN4IikNCmZvciAoaSBpbiBwYWNrYWdlX2xpc3QpIHsNCiAgbGlicmFyeShpLCBjaGFyYWN0ZXIub25seSA9IFRSVUUpDQp9DQpgYGANCg0KTG9hZCBkYXRhDQpgYGB7cn0NCnNldHdkKCJDOlxcVXNlcnNcXERhbGVcXERlc2t0b3AiKSAjZmlsZSBsb2NhdGlvbg0KaW5pdGlhbDwtcmVhZC54bHN4KCJQdmVudF9QJlNfMTM1X3N1cHB0YWJsZTFfdjIueGxzeCIsIHNoZWV0PTEsIHN0YXJ0Um93PTYsIGNvbE5hbWVzPUZBTFNFKSAjZmlsZSBuYW1lOyBza2lwIGZpcnN0IDUgcm9sZXMsIHdoaWNoIGFyZW4ndCBzcGVjaWVzIG5hbWVzDQpgYGANCg0KDQpjcmVhdGUgZGF0YWZyYW1lIGZvciBkZXNpcmVkIHRheG9uIGNvbHVtbnM7IHdpbGwgcmVtb3ZlIG5vbi1EYXJ3aW4gQ29yZSBvbmVzIGxhdGVyDQpgYGB7cn0NCnRheG9uX2RhdGE8LWRhdGEuZnJhbWUobWF0cml4KG5jb2w9Nyxucm93PWxlbmd0aChpbml0aWFsJFgxKSkpDQpjb2x1bW5fbmFtZXM8LWMoIkFwaGlhSUQiLCJwaHlsdW0iLCJkYXRhUHJvdmlkZXJfTmFtZSIsInNjaWVudGlmaWNOYW1lIiwic2NpZW50aWZpY05hbWVJRCIsImlkZW50aWZpY2F0aW9uUmVtYXJrcyIsInRheG9uUmFuayIpDQpjb2xuYW1lcyh0YXhvbl9kYXRhKTwtY29sdW1uX25hbWVzDQp0YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lPC1pbml0aWFsJFgxDQpgYGANCg0Kc3BsaXQgb3V0ICJzcC4iICBhbmQgInNwcC4iIG91dA0KYGBge3J9DQojcHV0IHNwLiBhbmQgc3BwLiBpbiBpZGVudGlmaWNhdGlvblJlbWFya3Mgd2hlbiBpbiBkYXRhUHJvdmlkZXJfTmFtZQ0KdGF4b25fZGF0YSRpZGVudGlmaWNhdGlvblJlbWFya3NbYyhncmVwKCJzcFxcLiIsdGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZSkpXTwtInNwLiIgDQp0YXhvbl9kYXRhJGlkZW50aWZpY2F0aW9uUmVtYXJrc1tjKGdyZXAoInNwcFxcLiIsdGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZSkpXTwtInNwcC4iIA0KDQojcmVtb3ZlIHNwLiBhbmQgc3BwLiBmcm9tIGlkZW50aWZpY2F0aW9uUmVtYXJrcw0KdGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZTwtIGdzdWIoInNwXFwuIiwiIix0YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lKQ0KdGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZTwtIGdzdWIoInNwcFxcLiIsIiIsdGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZSkNCg0KYGBgDQoNClRyeSB0byBnZXQgQXBoaWFJRCBmcm9tIGRhdGFQcm92aWRlcl9OYW1lDQpgYGB7cn0NCiNyZW1vdmUgcm93cyB0aGF0IGFyZSBlbnRpcmVseSBOQQ0KdGF4b25fZGF0YTwtIHRheG9uX2RhdGEgJT4lIGRyb3BfbmEoZGF0YVByb3ZpZGVyX05hbWUpDQoNCiNzb21lIG5hbWVzIHdlcmUgcmV0dXJuaW5nICJOQSIgZm9yIG5hbWVzIHRoYXQgbG9va2VkIHZpYWJsZSBiZWNhdXNlIG9mIGEgc3BhY2UgYXQgdGhlIGVuZDsgdGhlIGJhc2UgZnVuY3Rpb24gdHJpbXdzIHJlbW92ZXMgdGhpcyBzcGFjZQ0KZm9yIChpIGluIDE6bGVuZ3RoKHRheG9uX2RhdGEkZGF0YVByb3ZpZGVyX05hbWUpKSB7DQogIHRheG9uX2RhdGEkZGF0YVByb3ZpZGVyX05hbWVbaV08LXRyaW13cyh0YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lW2ldLCB3aGljaCA9ICJib3RoIikNCn0NCg0KI2dldCBBcGhpYUlEIHVzaW5nIG5hbWUgZ2l2ZW4gaW4gZGF0YVByb3ZpZGVyX05hbWU7IGlmIG5vIG1hdGNoZXMsIGlucHV0IGFuIGVycm9yIG1lc3NhZ2UgZm9yIHRoYXQgQXBoaWFJRA0KZm9yIChpIGluIDE6bGVuZ3RoKHRheG9uX2RhdGEkZGF0YVByb3ZpZGVyX05hbWUpKSB7DQogIHdvcm1zX3Jlc3VsdHM8LWdldF93b3Jtc2lkKHRheG9uX2RhdGEkZGF0YVByb3ZpZGVyX05hbWVbaV0pDQogIHdvcm1zX3Jlc3VsdHM8LXdvcm1zX3Jlc3VsdHNbWzFdXQ0KICAgIGlmIChpc1RSVUUod29ybXNfcmVzdWx0cz4wKSA9PSBUUlVFKSB7DQogICAgICB0YXhvbl9kYXRhJEFwaGlhSURbaV08LXdvcm1zX3Jlc3VsdHMNCiAgICB9DQogICAgZWxzZQ0KICAgICAgdGF4b25fZGF0YSRBcGhpYUlEW2ldPC1wYXN0ZSgiRXJyb3I6IG5vIEFwaGlhSUQgZm9yIGRhdGFQcm92aWRlcl9OYW1lIHZhbHVlIGluIHJvdyIsaSxzZXA9IiAiKQ0KfQ0KDQojc29tZSBvZiB0aGVzZSByZXN1bHQgaW4gbXVsdGlwbGUgcm93czsgd2hlbiBpdCBjb21lcyB1cCBpbiB0aGUgY29uc29sZSBhc2tpbmcgeW91IHRvIHNlbGVjdCBhIHJvdywgMSBpcyB1c3VhbGx5IHRoZSBiZXN0IGNob2ljZTsgaG93ZXZlciwgZm9yIHNvbWUgcmVhc29uLCBzZXR0aW5nIHJvd3M9MSBpbiBnZXRfd29ybXNpZCgpIHJlc3VsdHMgaW4gZXJyb3JzIGZvciBMZXBldG9kcmlsdXMNCg0KI3RoaXMgbWFrZSB0YWtlIGEgd2hpbGUNCmBgYA0KDQpmaWxsIGluIHNjaWVudGlmaWNOYW1lIGZyb20gQXBoaWFJRA0KYGBge3J9DQpmb3IgKGkgaW4gMTpsZW5ndGgodGF4b25fZGF0YSRkYXRhUHJvdmlkZXJfTmFtZSkpIHsNCiAgaWYgKCghZ3JlcGwoIlteMC05XSIsIHRheG9uX2RhdGEkQXBoaWFJRFtpXSkpPT1UUlVFKSB7ICNpZiAkQXBoaWFJRCBjb250YWlucyBvbmx5IG51bWJlcnMsDQogICAgdGF4b25fZGF0YSRzY2llbnRpZmljTmFtZVtpXTwtd21faWQybmFtZShhcy5udW1lcmljKHRheG9uX2RhdGEkQXBoaWFJRFtpXSkpDQogIH0gI3JldHJpZXZlIGFuZCBwYXN0ZSBzY2llbnRpZmljTmFtZSBmb3IgQXBoaWFJRCANCiAgZWxzZSANCiAgICB0YXhvbl9kYXRhJHNjaWVudGlmaWNOYW1lW2ldPC1wYXN0ZSgiY2Fubm90IGdldCBzY2llbnRpZmljTmFtZSBmcm9tIEFwaGlhSUQgLSBubyB2YWxpZCBBcGhpYUlEIikgICNvdGhlcndpc2UsIHBhc3RlIGVycm9yIG1lc3NhZ2UNCn0NCmBgYA0KDQpjaGVjayBpZiBBcGhpYUlEIC0+IHNjaWVudGlmaWNOYW1lIHZhbHVlIG1hdGNoZXMgdmFsdWUgZnJvbSBkYXRhIHByb3ZpZGVyDQpgYGB7cn0NCiNjcmVhdGUgY29sdW1uIHRvIGhvbGQgbWF0Y2gvbm9tYXRjaCBkYXRhDQp0YXhvbl9kYXRhPC1hZGRfY29sdW1uKHRheG9uX2RhdGEscHJvdmlkZXJfc2NpTmFtZV9tYXRjaD0iIiwuYWZ0ZXI9InNjaWVudGlmaWNOYW1lIikNCg0KI2NoZWNrIGlmIG1hdGNoLCB0b2xvd2VyKCkgaXMgdG8gYXZvaWQgbWlzbWF0Y2ggZHVlIHRvIGNhc2U7IHRydWUgbWVhbnMgdGhlIGNvbHVtbnMgZGF0YVByb3ZpZGVyX05hbWUgYW5kIHNjaWVudGlmaWNOYW1lIG1hdGNoLCBmYWxzZSBtZWFucyB0aGV5IGRvbid0DQpmb3IgKGkgaW4gMTpsZW5ndGgodGF4b25fZGF0YSRzY2llbnRpZmljTmFtZSkpIHsNCiAgdGF4b25fZGF0YSRwcm92aWRlcl9zY2lOYW1lX21hdGNoW2ldPC1pc1RSVUUodG9sb3dlcih0YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lW2ldKSA9PSB0b2xvd2VyKHRheG9uX2RhdGEkc2NpZW50aWZpY05hbWVbaV0pKQ0KfQ0KDQpgYGANCg0KRmlsbCBpbiBzY2llbnRpZmljTmFtZUlEIGZvciB0aG9zZSB3aXRoIG51bWVyaWMgdmFsdWVzIGluIEFwaGlhSUQ7IHVzaW5nIExTSURzDQpgYGB7cn0NCmZvciAoaSBpbiAxOmxlbmd0aCh0YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lKSkgew0KICBpZiAoKCFncmVwbCgiW14wLTldIiwgdGF4b25fZGF0YSRBcGhpYUlEW2ldKSk9PVRSVUUpIHsgI2lmICRBcGhpYUlEIGNvbnRhaW5zIG9ubHkgbnVtYmVycywNCiAgICB0YXhvbl9kYXRhJHNjaWVudGlmaWNOYW1lSURbaV08LXBhc3RlKCJ1cm46bHNpZDptYXJpbmVzcGVjaWVzLm9yZzp0YXhuYW1lOiIsdGF4b25fZGF0YSRBcGhpYUlEW2ldLHNlcD0iIikNCiAgfSAjYXNzZW1ibGUgTFNJRCANCiAgZWxzZSANCiAgICB0YXhvbl9kYXRhJHNjaWVudGlmaWNOYW1lSURbaV08LXBhc3RlKCJjYW5ub3QgY3JlYXRlIExTSUQgLSBubyB2YWxpZCBBcGhpYUlEIikgICNvdGhlcndpc2UsIHBhc3RlIGVycm9yIG1lc3NhZ2UNCn0NCmBgYA0KDQpyZXRyaWV2ZSBhbmQgZmlsbCBpbiB0YXhvblJhbmsgZnJvbSBBcGhpYUlEDQpgYGB7cn0NCmZvciAoaSBpbiAxOmxlbmd0aCh0YXhvbl9kYXRhJGRhdGFQcm92aWRlcl9OYW1lKSkgew0KICBpZiAoKCFncmVwbCgiW14wLTldIiwgdGF4b25fZGF0YSRBcGhpYUlEW2ldKSk9PVRSVUUpIHsgI2lmIEFwaGlhSUQgY29udGFpbnMgb25seSBudW1iZXJzIChpZSBpcyBqdXN0IHRoZSBBcGhpYUlEIG51bWJlciwgbm90IGFuIGVycm9yKSwNCiAgICB0YXhvbl9kYXRhJHRheG9uUmFua1tpXTwtdGF4X3JhbmsodGF4b25fZGF0YSRBcGhpYUlEW2ldLCBkYj0id29ybXMiKQ0KICB9ICNyZXRyaWV2ZSBhbmQgcGFzdGUgdGF4b24gcmFuaw0KICBlbHNlIA0KICAgIHRheG9uX2RhdGEkdGF4b25SYW5rW2ldPC1wYXN0ZSgiY2Fubm90IHJldHJpZXZlIHRheG9ub21pYyByYW5rIC0gbm8gdmFsaWQgQXBoaWFJRCIpICAjb3RoZXJ3aXNlLCBwYXN0ZSBlcnJvciBtZXNzYWdlDQp9DQoNCiN0aGUgYWJvdmUgcmVzdWx0cyBpbiB0YXhvblJhbmsgYmVpbmcgYSBsaXN0OyBzZXQgdG8gY2hhcmFjdGVyIGZvciBleHBvcnRpbmcNCnRheG9uX2RhdGEkdGF4b25SYW5rPC1hcy5jaGFyYWN0ZXIodGF4b25fZGF0YSR0YXhvblJhbmspIA0KYGBgDQoNCnJldHJpZXZlIGFuZCBmaWxsIGluIHBoeWx1bSBmcm9tIEFwaGlhSUQNCmBgYHtyfQ0KZm9yIChpIGluIDE6bGVuZ3RoKHRheG9uX2RhdGEkZGF0YVByb3ZpZGVyX05hbWUpKXsNCiAgaWYgKCghZ3JlcGwoIlteMC05XSIsIHRheG9uX2RhdGEkQXBoaWFJRFtpXSkpPT1UUlVFKSB7DQogICAgICB0cmVlPC1jbGFzc2lmaWNhdGlvbihhcy5udW1lcmljKHRheG9uX2RhdGEkQXBoaWFJRFtpXSksIGRiPSd3b3JtcycpICNnZXQgdGF4b25vbWljIHN0dWZmIGZyb20gV29STVMgYmFzZWQgb24gQXBoaWFJRA0KICAgICAgZGZfdHJlZTwtYXMuZGF0YS5mcmFtZSh0cmVlW1sxXV0pICN0YWtlIGp1c3QgdGhlIG5hbWUvcmFuay9pZCBwb3J0aW9uLCBhcyBhIGRmLCBmcm9tIGNsYXNzaWZpY2F0aW9uKCkgb3V0cHV0DQogICAgICAgIGlmIChsZW5ndGgoZGZfdHJlZSRuYW1lWyh3aGljaChkZl90cmVlJHJhbms9PSJQaHlsdW0iKSldKT09MCkgeyAjc29tZSBhcmUgb25seSB0byBBbmltYWxpYSwgYW5kIHNvIGhhdmUgbm8gdmFsdWUgZm9yIHBoeWx1bSBpbiB0aGUgb3V0cHV0IGZyb20gY2xhc3NpZmljYXRpb24oKTsgcHV0ICJOQSIgaGVyZS4gVGhpcyBpZi9lbHNlIGhlbHBzIHByZXZlbnQgdGhlIGZvciBsb29wIGZyb20gdGhyb3dpbmcgYW4gZXJyb3IgYW5kIHN0b3BwaW5nIHdoZW4gaXQgZW5jb3VudGVycyBhIGNsYXNzaWZpY2F0aW9uKCkgb3V0cHV0IHRoYXQgaGFzIG5vIHBoeWx1bQ0KICAgICAgICAgICAgdGF4b25fZGF0YSRwaHlsdW1baV08LSJOQSINCiAgICAjcGFzdGUoYygiZXJyb3Igcm93OiIsaSwiIEFwaGlhSUQ6Iix0YXhvbl9kYXRhJEFwaGlhSURbaV0pLCBzZXA9IiIpDQogICAgICAgICB9DQogICAgICAgIGVsc2UNCiAgICAgICAgICB0YXhvbl9kYXRhJHBoeWx1bVtpXTwtZGZfdHJlZSRuYW1lW3doaWNoKGRmX3RyZWUkcmFuayA9PSAiUGh5bHVtIildICNzZXQgbmFtZSBvZiB0aGUgcGh5bHVtIHRvIHRheG9uX2RhdGEkcGh5bHVtIHZhbHVlDQogIH0gZWxzZQ0KICAgICAgdGF4b25fZGF0YSRwaHlsdW1baV08LXBhc3RlKCJubyBwaHlsdW0gdmFsdWUgZm9yIGludmFsaWQgQXBoaWFJRHMiKQ0KfQ0KYGBgDQoNCm91dHB1dCBjdXJyZW50IGNoYXJ0IGFzIGNzdg0KYGBge3J9DQojcmVtb3ZlIHVud2FudGVkIGNvbHVtbnMNCnRheG9uX2RhdGFfRHdDPC1zdWJzZXQodGF4b25fZGF0YSxzZWxlY3Q9LWMoQXBoaWFJRCxkYXRhUHJvdmlkZXJfTmFtZSxwcm92aWRlcl9zY2lOYW1lX21hdGNoLGlkZW50aWZpY2F0aW9uUmVtYXJrcykpDQoNCiN3cml0ZSBjc3YNCndyaXRlLmNzdih0YXhvbl9kYXRhX0R3Qywib3V0cHV0X2RlbW9fbW9kaWZpZWRfZm9yTGF1cmVuTS5jc3YiKQ0KYGBg</div>
 
 
 

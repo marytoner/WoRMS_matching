@@ -22,7 +22,7 @@ for (i in package_list) {
 
 Load data
 ```{r}
-setwd("C:\\Users\\Dale\\Desktop") #file location
+setwd("C:\\Users\\Mary\\Desktop") #file location
 initial<-read.xlsx("Pvent_P&S_135_supptable1_v2.xlsx", sheet=1, startRow=6, colNames=FALSE) #file name; skip first 5 roles, which aren't species names
 ```
 
@@ -37,12 +37,12 @@ taxon_data$dataProvider_Name<-initial$X1
 
 split out "sp."  and "spp." out
 ```{r}
-taxon_data$identificationRemarks[c(grep("sp\\.",taxon_data$dataProvider_Name))]<-"sp." #put sp. in when in dataaProvider_Name
+#put sp. and spp. in identificationRemarks when in dataProvider_Name
+taxon_data$identificationRemarks[c(grep("sp\\.",taxon_data$dataProvider_Name))]<-"sp." 
+taxon_data$identificationRemarks[c(grep("spp\\.",taxon_data$dataProvider_Name))]<-"spp." 
 
-taxon_data$identificationRemarks[c(grep("spp\\.",taxon_data$dataProvider_Name))]<-"spp." #put spp. "
-
+#remove sp. and spp. from identificationRemarks
 taxon_data$dataProvider_Name<- gsub("sp\\.","",taxon_data$dataProvider_Name)
-
 taxon_data$dataProvider_Name<- gsub("spp\\.","",taxon_data$dataProvider_Name)
 
 ```
@@ -51,7 +51,13 @@ Try to get AphiaID from dataProvider_Name
 ```{r}
 #remove rows that are entirely NA
 taxon_data<- taxon_data %>% drop_na(dataProvider_Name)
-  
+
+#some names were returning "NA" for names that looked viable because of a space at the end; the base function trimws removes this space
+for (i in 1:length(taxon_data$dataProvider_Name)) {
+  taxon_data$dataProvider_Name[i]<-trimws(taxon_data$dataProvider_Name[i], which = "both")
+}
+
+#get AphiaID using name given in dataProvider_Name; if no matches, input an error message for that AphiaID
 for (i in 1:length(taxon_data$dataProvider_Name)) {
   worms_results<-get_wormsid(taxon_data$dataProvider_Name[i])
   worms_results<-worms_results[[1]]
@@ -104,7 +110,7 @@ for (i in 1:length(taxon_data$dataProvider_Name)) {
 retrieve and fill in taxonRank from AphiaID
 ```{r}
 for (i in 1:length(taxon_data$dataProvider_Name)) {
-  if ((!grepl("[^0-9]", taxon_data$AphiaID[i]))==TRUE) { #if AphiaID contains only numbers,
+  if ((!grepl("[^0-9]", taxon_data$AphiaID[i]))==TRUE) { #if AphiaID contains only numbers (ie is just the AphiaID number, not an error),
     taxon_data$taxonRank[i]<-tax_rank(taxon_data$AphiaID[i], db="worms")
   } #retrieve and paste taxon rank
   else 
@@ -134,5 +140,9 @@ for (i in 1:length(taxon_data$dataProvider_Name)){
 
 output current chart as csv
 ```{r}
-write.csv(taxon_data,"output_demo_modified_forLaurenM.csv")
+#remove unwanted columns
+taxon_data_DwC<-subset(taxon_data,select=-c(AphiaID,dataProvider_Name,provider_sciName_match,identificationRemarks))
+
+#write csv
+write.csv(taxon_data_DwC,"output_demo_modified_forLaurenM.csv")
 ```
