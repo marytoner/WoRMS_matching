@@ -1,7 +1,15 @@
 ---
-title: "Demo_modified_Lauren"
+title: "Demo_modified_LaurenM"
 output: html_notebook
 ---
+##Purpose
+The purpose of this R Notebook is to, ultimately, get the scientific name, LSID, phylum, and taxonomic rank of a list of organisms, pulled from an .xlsx file containing counts. The scientific name, LSID, phylum, and rank are all determined using the AphiaIDs of each entry in the original list. Generally, these are the first (or only) result for the function taxize::get_wormsid("organism name, as it appears in original list"). 
+
+In instances where that function did not yield results, worrms::wm_records_name() and wm_records_common() were used to search for AphiaIDs for names more roughly matching the original organism name(treating it as a scientific name), and for AphiaIDs associated with scientific names for which the original entry was a common name. These were used after get_wormsid(), and so would not check for AphiaIDs already found, but were helpful in cases where the get_wormsid() turned up nothing (eg, "isopods" did not match to an AphiaID using get_wormsid(), but it did using wm_records_common(), possibly because of the plural). Note that sometimes, a common name may match a scientific name in worms, and so get_wormsid() may yield an AphiaID for that scientific name, rather than for the common name, and wm_records_common() won't search for the id for that name, because it already has one.
+
+There is also code for checking if the input organism name is accepted or not; though the aphia ID and name of the accepted term for a given species is retrieved, the original name and aphia id associated with it are what are used to get LSID, scientific name, phylum, and taxonomic rank.
+
+##Code
 Libraries
 ```{r}
 package_list<-c("taxize",
@@ -9,7 +17,8 @@ package_list<-c("taxize",
                 "tidyr",
                 "dplyr",
                 "tibble",
-                "openxlsx")
+                "openxlsx",
+                "knitr")
 #install.packages("taxize") #install packages as necessary
 #install.packages("tidyr") # "
 #install.packages("dplyr") # "
@@ -23,32 +32,48 @@ for (i in package_list) {
 Load data
 ```{r}
 setwd("C:\\Users\\Mary\\Desktop") #file location
-initial<-read.xlsx("Pvent_P&S_135_supptable1_v2.xlsx", sheet=1, startRow=6, colNames=FALSE) #file name; skip first 5 roles, which aren't species names
+initial<-read.xlsx("Pvent_P&S_135_supptable1_v2.xlsx", sheet=2, startRow=6, colNames=FALSE) #file name; skip first 5 roles, which aren't species names
+calculations<-read.xlsx("Pvent_P&S_135_supptable1_v2.xlsx", sheet=1, startRow=6, colNames=FALSE)
 ```
 
+compare sheets 1 ("calculations") and 2 ("Plates&Sieve") to see if species match
+```{r}
+# species_CalculationSheet<-calculations$X1
+# species_PlatenSieveSheet<-initial$X1
+# 
+# setdiff(species_CalculationSheet, species_PlatenSieveSheet) #in 1, not 2
+# setdiff(species_PlatenSieveSheet, species_CalculationSheet) #in 2, not 1
+```
 
 create dataframe for desired taxon columns; will remove non-Darwin Core ones later
 ```{r}
 taxon_data<-data.frame(matrix(ncol=7,nrow=length(initial$X1)))
-column_names<-c("AphiaID","phylum","dataProvider_Name","scientificName","scientificNameID","identificationRemarks","taxonRank")
+column_names<-c("AphiaID","dataProvider_Name","phylum","scientificName","scientificNameID","identificationRemarks","taxonRank")
 colnames(taxon_data)<-column_names
 taxon_data$dataProvider_Name<-initial$X1
 ```
 
 split out "sp."  and "spp." out
 ```{r}
-#put sp. and spp. in identificationRemarks when in dataProvider_Name
-taxon_data$identificationRemarks[c(grep("sp\\.",taxon_data$dataProvider_Name))]<-"sp." 
-taxon_data$identificationRemarks[c(grep("spp\\.",taxon_data$dataProvider_Name))]<-"spp." 
+#put sp. and spp. in identificationRemarks when in dataProvider_Name; some only have sp w/o .
+taxon_data$identificationRemarks[c(grep("spp",taxon_data$dataProvider_Name))]<-"spp."
+taxon_data$identificationRemarks[c(grep("sp\\.",taxon_data$dataProvider_Name))]<-"sp."
+taxon_data$identificationRemarks[c(grep("sp$",taxon_data$dataProvider_Name))]<-"sp."
 
-#remove sp. and spp. from identificationRemarks
-taxon_data$dataProvider_Name<- gsub("sp\\.","",taxon_data$dataProvider_Name)
+#remove sp. and spp. from identificationRemarks; also . b/c some had . at end, and astrisk
 taxon_data$dataProvider_Name<- gsub("spp\\.","",taxon_data$dataProvider_Name)
-
+taxon_data$dataProvider_Name<- gsub("sp\\.","",taxon_data$dataProvider_Name)
+taxon_data$dataProvider_Name<- gsub("sp$","",taxon_data$dataProvider_Name)
+taxon_data$dataProvider_Name<- gsub("\\*","",taxon_data$dataProvider_Name)
 ```
 
 Try to get AphiaID from dataProvider_Name
-```{r}
+```{r echo=T, results='hide'}
+#Notes:
+  #WoRMS doesn't like plurals or misspellings; the function used (get_wormsid) doesn't really do fuzzy matching well, and plurals don't turn up any matches when searching the WoRMS database manually (at least at this point in time), so plurals, misspellings, common names, etc, will all give errors
+#this and the following section use functions from two packages to do similar things: taxize and worrms
+    ##the worrms functions are better with fuzzy matches, common names, and accepted/not (+ other attributes), but have more difficult erros; the taxize function yields less info and is a bit stricter with matches, but is a lot easier to handle wrt no matches
+
 #remove rows that are entirely NA
 taxon_data<- taxon_data %>% drop_na(dataProvider_Name)
 
@@ -71,10 +96,139 @@ for (i in 1:length(taxon_data$dataProvider_Name)) {
 #some of these result in multiple rows; when it comes up in the console asking you to select a row, 1 is usually the best choice; however, for some reason, setting rows=1 in get_wormsid() results in errors for Lepetodrilus
 
 #this make take a while
+
+#backup taxon_data, for if below messes stuff up
+#taxon_data_2<-taxon_data
+#taxon_data<-taxon_data_2
+
+#add column indicating source of AphiaID (default is taxize function, bc that was the source above)
+taxon_data<-add_column(taxon_data,AphiaID_source="",.after="AphiaID")
+for (i in 1:length(taxon_data$dataProvider_Name)) {
+  if (isTRUE(!grepl("[^0-9]", taxon_data$AphiaID[i])==TRUE)) {
+    taxon_data$AphiaID_source[i]<-"taxize::get_wormsid(dataProvider_Name)"
+  }
+}
+
+#check common names, too, to see if the error is there- also works for plurals of common names
+for (i in 1:length(taxon_data$dataProvider_Name)) {
+  if ((!grepl("[^0-9]", taxon_data$AphiaID[i]))==FALSE) { #if $AphiaID doesn't contain only numbers (ie, was one of the errors from before)
+    tryCatch({ #skip errors, assign error message if error
+        worms_results<-wm_records_common(taxon_data$dataProvider_Name[i]) #search for worms id as if the value in dataProvider_Name is a common name
+        AphiaID<-worms_results$AphiaID[1]
+          if (is.numeric(AphiaID) == TRUE) { #if aphiaID is numeric
+            taxon_data$AphiaID[i]<-worms_results$AphiaID[1] #aphiaID of first result yielded by wm_common name
+            taxon_data$AphiaID_source[i]<-"worrms::wm_records_common(dataProvider_Name)" #identify source of aphiaID
+          }
+          else
+            taxon_data$AphiaID[i]<-paste("Error: no AphiaID for dataProvider_Name value in row",i,sep=" ")}, #print error if AphiaID from wm_records_common is not numeric; possibly not necessary
+        error= function(e) {
+          taxon_data$AphiaID[i]<-paste("Error: no AphiaID for dataProvider_Name value in row",i,sep=" ") #if there's an error (from wm_records_common(), usually a no content error b/c unable to find a result for that entry), paste the same error message as beforehand
+    })
+  }
+}
+
+#then repeat with worrms function for AphiaID from scientific name, see if fuzzy matching helps
+for (i in 1:length(taxon_data$dataProvider_Name)) {
+  if ((!grepl("[^0-9]", taxon_data$AphiaID[i]))==FALSE) {
+    tryCatch({
+        worms_results<-wm_records_name(taxon_data$dataProvider_Name[i])
+        AphiaID<-worms_results$AphiaID[1]
+          if (is.numeric(AphiaID) == TRUE) {
+            taxon_data$AphiaID[i]<-worms_results$AphiaID[1]
+            taxon_data$AphiaID_source[i]<-"worrms::wm_records_name(dataProvider_Name)"
+          }
+          else
+            taxon_data$AphiaID[i]<-paste("Error: no AphiaID for dataProvider_Name value in row",i,sep=" ")}, 
+        error= function(e) {
+          taxon_data$AphiaID[i]<-paste("Error: no AphiaID for dataProvider_Name value in row",i,sep=" ")
+    })
+  }
+}
+
+#if AphiaID has an error still, make source blank
+for (i in 1:length(taxon_data$dataProvider_Name)) {
+  if (nchar(taxon_data$AphiaID_source[i])<1) {
+    taxon_data$AphiaID_source[i]<-paste("Error: no AphiaID for dataProvider_Name value in row",i,sep=" ")
+  }
+}
+    
 ```
+
+check if name is the accepted name; give accepted name and aphiaID of accepted name
+```{r}
+#add column for accepted/not, and valid values
+taxon_data<-add_column(taxon_data,accepted_status="",.after="dataProvider_Name")
+taxon_data<-add_column(taxon_data,accepted_name="",.after="accepted_status")
+taxon_data<-add_column(taxon_data,accepted_AphiaID="",.after="AphiaID")
+taxon_data<-add_column(taxon_data,accepted_source="",.after="AphiaID_source")
+ 
+#check if AphiaID accepted/not, print accepted name and ID from dataProvider_Name as scientific name
+for (i in 1:length(taxon_data$dataProvider_Name)) {
+ tryCatch({
+   worms_results<-wm_records_name(taxon_data$dataProvider_Name[i])
+   taxon_data$accepted_status[i]<-worms_results$status[1]
+   taxon_data$accepted_name[i]<-worms_results$valid_name[1]
+   taxon_data$accepted_AphiaID[i]<-worms_results$valid_AphiaID[1]
+   taxon_data$accepted_source[i]<-"worrms::wm_records_name(dataProvider_Name)"
+  }, 
+   error=function(e){
+    taxon_data$accepted_AphiaID[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
+    taxon_data$accepted_name[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
+    taxon_data$accepted_status[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
+    taxon_data$accepted_source[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
+
+   })
+}
+
+#as above, but try dataProvider_Name as common name
+for (i in 1:length(taxon_data$dataProvider_Name)) {
+  if(isTRUE(nchar(taxon_data$accepted_status[i])>0)==FALSE) {
+   tryCatch({
+    worms_results<-wm_records_common(taxon_data$dataProvider_Name[i])
+    taxon_data$accepted_status[i]<-worms_results$status[1]
+    taxon_data$accepted_name[i]<-worms_results$valid_name[1]
+    taxon_data$accepted_AphiaID[i]<-worms_results$valid_AphiaID[1]
+    taxon_data$accepted_source[i]<-"worrms::wm_records_common(dataProvider_Name)"
+    }, 
+   error=function(e){
+    taxon_data$accepted_AphiaID[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
+    taxon_data$accepted_name[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
+    taxon_data$accepted_status[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
+    taxon_data$accepted_source[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
+
+   })
+  }
+}
+
+#taxon_data_2<-taxon_data #safe reserve copy
+#taxon_data<-taxon_data_2 #restore from copy
+
+#finally, if still blank after all of that (b/c trying to insert it in the error portion of tryCatch didn't work), fill in accepted_AphiaID/etc with error messages
+for (i in 1:length(taxon_data$dataProvider_Name)) {
+  if(isTRUE(nchar(taxon_data$accepted_AphiaID[i])>0) == FALSE) {
+    taxon_data$accepted_AphiaID[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
+    taxon_data$accepted_name[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
+    taxon_data$accepted_status[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
+    taxon_data$accepted_source[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
+  }
+}
+
+#add column to check if AphiaIDs match
+taxon_data<-add_column(taxon_data,AphiaID_acceptedID_match="",.after="accepted_AphiaID")
+
+#check if AphiaID matches accepted ID
+for (i in 1:length(taxon_data$dataProvider_Name)) {
+  if (taxon_data$AphiaID[i] == taxon_data$accepted_AphiaID[i]) {
+    taxon_data$AphiaID_acceptedID_match[i]<-"TRUE"
+  } else
+    taxon_data$AphiaID_acceptedID_match[i]<-"FALSE"
+}
+```
+
 
 fill in scientificName from AphiaID
 ```{r}
+#scientific name from dataProvider_Name
 for (i in 1:length(taxon_data$dataProvider_Name)) {
   if ((!grepl("[^0-9]", taxon_data$AphiaID[i]))==TRUE) { #if $AphiaID contains only numbers,
     taxon_data$scientificName[i]<-wm_id2name(as.numeric(taxon_data$AphiaID[i]))
@@ -138,11 +292,13 @@ for (i in 1:length(taxon_data$dataProvider_Name)){
 }
 ```
 
-output current chart as csv
+output current data frame as csv
 ```{r}
-#remove unwanted columns
-taxon_data_DwC<-subset(taxon_data,select=-c(AphiaID,dataProvider_Name,provider_sciName_match,identificationRemarks))
+#output as-is
+write.csv(taxon_data,"output_demo_modified_forLaurenM_notcleaned.csv")
 
+#remove unwanted columns for Darwin Core Compliance
+taxon_data_DwC<-subset(taxon_data,select=c(phylum,scientificName,scientificNameID,taxonRank))
 #write csv
 write.csv(taxon_data_DwC,"output_demo_modified_forLaurenM.csv")
 ```
