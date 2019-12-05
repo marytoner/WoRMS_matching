@@ -172,9 +172,9 @@ for (i in 1:length(taxon_data$dataProvider_Name)) {
    taxon_data$accepted_source[i]<-"worrms::wm_records_name(dataProvider_Name)"
   }, 
    error=function(e){
-    taxon_data$accepted_AphiaID[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
-    taxon_data$accepted_name[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
     taxon_data$accepted_status[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
+    taxon_data$accepted_name[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
+    taxon_data$accepted_AphiaID[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
     taxon_data$accepted_source[i]<-paste("no results for ",taxon_data$dataProvider_Name[i])
 
    })

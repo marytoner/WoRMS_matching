@@ -23,29 +23,31 @@ get scientific name from manual AphiaID
 #make sure AphiaID is numeric
 df$AphiaID<-as.numeric(df$AphiaID)
 
-#add in column for AphiaID-generated scientific name
-df<-add_column(df,name_from_AphiaID="",.after="scientificName")
-
 #using taxize
+#add in column for AphiaID-generated scientific name
+library(tibble)
+  df<-add_column(df,name_from_AphiaID_taxize="",.after="scientificName")
 #install.package("taxize")
 library("taxize")
 for (i in 1:length(df$AphiaID)) {
-  if (isTRUE(nchar(df$AphiaID[i])>0)==TRUE) {
+  if (isTRUE(df$AphiaID[i]>0)==TRUE) {
     df_id_tree<-id2name(df$AphiaID[i],db="worms")
     df_id<-df_id_tree[[1]]
-    df$name_from_AphiaID[i]<-df_id$name[1]
+    df$name_from_AphiaID_taxize[i]<-df_id$name[1]
   } else
-    df$name_from_AphiaID[i]<-"no manual AphiaID"
+    df$name_from_AphiaID_taxize[i]<-"no manual AphiaID"
 }
 
 #using worrms
+library(tibble)
+  df<-add_column(df,name_from_AphiaID_worrms="",.after="scientificName")
 #install.package("worrms")
 library("worrms")
 for (i in 1:length(df$AphiaID)) {
-  if (isTRUE(nchar(df$AphiaID[i])>0)==TRUE) {
-    df$name_from_AphiaID[i]<-wm_id2name(df$AphiaID[i])
+  if (isTRUE(df$AphiaID[i]>0)==TRUE) {
+    df$name_from_AphiaID_worrms[i]<-wm_id2name(df$AphiaID[i])
   } else
-    df$name_from_AphiaID[i]<-"no manual AphiaID"
+    df$name_from_AphiaID_worrms[i]<-"no manual AphiaID"
 }
 ```
 
@@ -57,19 +59,27 @@ A mismatch between the manual scientific name and AphiaID-generated name could b
 -use of common name in manual scientific name
 -use of plurals in manual scientific name
 ```{r}
-#check if names match match
+#check if names match (scientificName and AphiaID_taxize name)
 ##add column to hold check
-df<-add_column(df,scientificName_AphiaIDName_Match="",.after="name_from_AphiaID")
+df<-add_column(df,scientificName_AphiaIDName_Match="",.after="name_from_AphiaID_taxize") #or name_from_AphiaID_worrms
 
 ##run check itself (tolower() is present to account for variations in capitalization)
 for (i in 1:length(df$AphiaID)) {
-  if (isTRUE(tolower(df$scientificName[i])==tolower(df$name_from_AphiaID[i]))==TRUE) {
+  if (isTRUE(tolower(df$scientificName[i])==tolower(df$name_from_AphiaID_taxize[i]))==TRUE) { #or name_from_AphiaID_worrms
     df$scientificName_AphiaIDName_Match[i]<-TRUE
   } else 
     df$scientificName_AphiaIDName_Match[i]<-FALSE
 }
-```
 
+# #check if taxize and worrms names match, if both are run
+# df<-add_column(df,taxize_worms_match="",.after="name_from_AphiaID_taxize")
+# for (i in 1:length(df$AphiaID)) {
+#   if (isTRUE(tolower(df$name_from_AphiaID_taxize[i]) == tolower(df$name_from_AphiaID_worrms[i])) == TRUE) {
+#     df$taxize_worms_match[i]<-TRUE
+#   } else 
+#     df$taxize_worms_match[i]<-FALSE
+# }
+```
 
 ##other potentially useful functions from these packages
 Some other functions from taxize that might be useful are (need to specify db="worms" in some functions to use AphiaID):
