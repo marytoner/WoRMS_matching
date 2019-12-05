@@ -1,0 +1,169 @@
+packages
+```{r}
+package_list<-c("taxize",
+                "worrms",
+                "tidyr",
+                "dplyr",
+                "tibble")
+#install.packages("taxize") #install packages as necessary
+#install.packages("tidyr") # "
+#install.packages("dplyr") # "
+#install.packages("tibble") # "
+for (i in package_list) {
+  library(i, character.only = TRUE)
+}
+```
+
+create example dataframe
+```{r}
+eg<-data.frame(matrix(ncol=7,nrow=8))
+  #AphiaID, occurrenceID, kingdom, phylum, scientificName, scientificNameID, taxonRank, identificationRemarks, identificationQualifiers
+headers<-c("AphiaID", "occurrenceID", "kingdom", "phylum", "scientificName", "scientificNameID", "taxonRank")
+colnames(eg)<-headers
+eg$AphiaID<-c(138464,391517,325227,921,939,883,1078,395801)
+eg$scientificName<-c("Anatoma (keel)", "Desbruyeresia cf. marianaensis","Amphisamytha n. sp.", "Capittellidae", "Polynoidae","unidentified, large, other polychaete","Ostracoda", "Leucolepas longa")
+
+```
+
+move commentary in scientificName column to identificationRemarks
+```{r}
+eg<-separate(data=eg, col=scientificName, into=c("scientificName", "identificationRemarks"), sep="\\s", extra="merge") #separates at first space
+  #collateral damage: scientificNames at the species level, with a space in them; can be fixed by having two identificationRemarks columns (eg, identificationRemarks_A and _B), moving things after the space into _B, merging A and B after the check-against-scientificName-from-AphiaID step, then removing any identificationRemarks that exactly match scientificName
+```
+
+
+get scientificName associated with AphiaID (according to WoRMS), check against manual scientificName, and move current value for scientificName to a new column if they don't match (useful for checking if difference is due to incorrect AphiaID, spelling, etc). Then, merge identificationRemarks and that new column, check against scientificName value, and remove the identificationRemarks value if they're equal (useful for when species names are split at a space, above)
+```{r}
+#create column to hold manual scientificNames if no match; alternative is to put them in identificationRemarks, but you risk overwritting anything already in there
+eg<-add_column(eg,scientificName_Manual=NA,.after="scientificName")
+
+#wm_id2name (used below) is from the package worrms
+for (x in 1:length(eg$AphiaID)) { 
+  if (isTRUE(eg$scientificName[x] == as.character(wm_id2name(eg$AphiaID[x]))) == FALSE) { #if taxon value doesn't match sci name for aphiaID
+    eg$scientificName_Manual[x]<-eg$scientificName[x] #copy existing taxon value to scientificNames_Manual
+    eg$scientificName[x] <- as.character(wm_id2name(eg$AphiaID[x])) #replace scientificNames value with WoRMS value
+  }
+}
+
+#merge scientificNames_Manual with identificationRemarks to unite any species names that were two words
+#unite is in tidyr
+eg<-unite(data=eg,col=identificationRemarks,scientificName_Manual,identificationRemarks,sep=" ", na.rm=TRUE, remove=TRUE)
+
+#make identificationRemarks blank if it matches scientificName
+for (x in 1:length(eg$AphiaID)) {
+  if (eg$scientificName[x] == eg$identificationRemarks[x]) {
+   eg$identificationRemarks[x] <-"" 
+  }
+}
+```
+
+fill out scientificNameIDs (Life Science Identifiers)
+```{r}
+LSIDs<-paste("urn:lsid:marinespecies.org:taxname:",c(eg$AphiaID),sep="") #create list of LSIDs
+eg$scientificNameID<-LSIDs
+```
+
+get taxonomic rank of scientificName/AphiaID
+```{r}
+#uses tax_rank from taxize package
+ranks<-tax_rank(eg$AphiaID, db="worms") #create vector of ranks, based on AphiaID and WoRMS database
+eg$taxonRank<-as.character(ranks)
+```
+
+get kingdom and phylum
+```{r}
+#uses classification() from taxize package
+#kindom; usually Animalia
+for (i in 1:length(eg$AphiaID)){
+  tree<-classification(eg$AphiaID[i], db='worms') #get taxonomic stuff from WoRMS based on AphiaID
+  df_tree<-as.data.frame(tree[[1]]) #take just the name/rank/id portion, as a df, from classification() output
+  if (length(df_tree$name[(which(df_tree$rank=="Kingdom"))])==0) { #if you don't have a Kingdom idk what you're doing
+    eg$kingdom[i]<-"NA"
+  }
+  else
+    eg$kingdom[i]<-df_tree$name[which(df_tree$rank == "Kingdom")] #set name of the phylum to initial_cleaning$Phylum value
+}
+
+#do the same for phylum
+for (i in 1:length(eg$AphiaID)){
+  tree<-classification(eg$AphiaID[i], db='worms') #get taxonomic stuff from WoRMS based on AphiaID
+  df_tree<-as.data.frame(tree[[1]]) #take just the name/rank/id portion, as a df, from classification() output
+  if (length(df_tree$name[(which(df_tree$rank=="Phylum"))])==0) { #some are only to Animalia, and so have no value for Phylum in the output from classification(); put "NA" here. This if/else helps prevent the for loop from throwing an error and stopping when it encounters a classification() output that has no phylum
+    eg$phylum[i]<-"NA"
+    #paste(c("error row:",i," AphiaID:",initial_cleaning$AphiaID[i]), sep="")
+  }
+  else
+    eg$phylum[i]<-df_tree$name[which(df_tree$rank == "Phylum")] #set name of the phylum to initial_cleaning$Phylum value
+}
+```
+
+generate occurrenceIDs, check for duplicates
+-can do any patterning; this is based off what we submitted to BOLD before
+```{r}
+#samples with photos from, or counts only in, 166:
+p166<-c("Ampharetidae",
+        "Nicomache",
+        "Folliculinidae"
+        )
+
+#samples with photos from 165:
+p165<-c("Actiniidae",
+        "Foraminifera"
+        )
+
+#create three source-of-sample options
+source<-c("box","166","165")
+
+#fill out occurrenceIDs, generically, with correct source
+for (i in 1:length(eg$AphiaID)){
+  if (is.na(eg$occurrenceID[i])) {
+    if (eg$scientificName[i] %in% p166 == TRUE) {
+      eg$occurrenceID[i] <-paste("SNL14S5",source[2],substr(eg$scientificName[i],start=1,stop=2),"01",sep="")
+       }
+    if (eg$scientificName[i] %in% p165 == TRUE) {
+      eg$occurrenceID[i] <-paste("SNL14S5",source[3],substr(eg$scientificName[i],start=1,stop=2),"01",sep="")
+       }
+    else {
+      eg$occurrenceID[i] <-paste("SNL14S5",source[1],substr(eg$scientificName[i],start=1,stop=2),"01",sep="")
+      }
+    }
+}
+
+#adjust duplicates manually
+  #get list of duplicates
+eg %>% group_by(occurrenceID) %>% filter(n() > 1)
+
+#rename one of those duplicates manually
+eg$occurrenceID[which(eg$scientificName == "Polynoidae")] <- "SNL14S5boxPn01" #rename polynoid occurrenceID
+
+#double-check
+eg %>% group_by(occurrenceID) %>% filter(n() > 1)
+```
+
+move qualifiers (cf., aff., n. sp.) to identificationQualifiers
+```{r}
+#create identificationQualifiers column
+eg<-add_column(eg,identificationQualifier=NA,.after="identificationRemarks")
+
+for (i in 1:length(eg$AphiaID)) { #add cf., aff., etc. into identificationQualifiers; will need to manually clean commentary out later
+  if (isTRUE(grep("cf",as.character(eg$identificationRemarks[i])) > 0)) {
+    eg$identificationQualifier[i] <-eg$identificationRemarks[i]
+    eg$identificationRemarks[i] <-""
+    } 
+  if (isTRUE(grep("aff",as.character(eg$identificationRemarks[i]))> 0)) {
+    eg$identificationQualifier[i] <-eg$identificationRemarks[i]
+    eg$identificationRemarks[i] <-""
+    }
+  if (isTRUE(grep("n. sp",as.character(eg$identificationRemarks[i]))> 0)) {
+    eg$identificationQualifier[i] <-"n. sp."
+    eg$identificationRemarks[i] <-""
+  }
+}
+```
+
+reorder columns so it's a little prettier, remove AphiaID
+```{r}
+col_order <- c("occurrenceID", "kingdom", "phylum", "scientificName", "scientificNameID", "taxonRank", "identificationRemarks", "identificationQualifier")
+eg <- eg[, col_order]
+```
+

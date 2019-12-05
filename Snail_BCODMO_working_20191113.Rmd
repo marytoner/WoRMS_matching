@@ -1,0 +1,637 @@
+---
+title: "R Notebook_Snail_Vent_to_BCODMO_OBIS"
+output: html_notebook
+---
+#Preface
+##Purpose
+The purpose of this notebook is to convert our table of Snail Vent samples into a presence/absence dataset that can be uploaded to BCO-DMO and OBIS, in a manner consistent with Darwin Core. These samples are from sandwiches recovered during Jason dive J2-797 on November 30th, 2014, during the Submarine Ring of Fire - Ironman cruise (rr1413). The dive began at 01:11:35 on November 29th, 2014, and ended at 04:37:42 on December 2nd, 2014. Logs from Jason indicate that the relevant sandwiches were recovered at or around 08:00 on November 30th, 2014. All times are UTC.
+
+The Virtual Van viewing of this dive can be found at http://4dgeo.whoi.edu/webdata/virtualvan/html/VV-rr1413/index.html. 
+
+The cruise report for this cruise can be found (automatic download) at: https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&ved=2ahUKEwiY3aaqtY3lAhVIVd8KHSj_AcIQFjAAegQIARAC&url=https%3A%2F%2Fwww.pmel.noaa.gov%2Feoi%2Fmarianas%2FSRoF-Ironman-2014-CruiseReport-withdivelogs.pdf&usg=AOvVaw3rO1p_jai3VB5Gl1P44Ri4
+
+##Darwin Core terms listed on the OBIS website
+Below is the list of Darwin Core terms OBIS currently uses, as presented on their website (https://obis.org/manual/darwincore/). An asterisk denotes terms recommended by OBIS, while a double asterisk denotes required terms.
+
+####Taxon
+  - scientificName**
+  - scientficiNameID**
+  - scientificNameAuthorship*
+  - kingdom*
+  - taxonRank*
+  - TaxonRemarks
+
+####Identification
+  - identifiedBy
+  - dateidentified
+  - identificationReferences
+  - identificationRemarks
+  - identificationQualifier
+  - typeStatus
+
+####occurrence
+  - occurrenceID**
+  - occurrenceStatus**
+  - recordedBy
+  - individualCount
+  - organismQuantity 
+  - organismQuantityType
+  - sex
+  - lifeStage
+  - behavior
+  - associatedTaxa
+  - occurrenceRemarks
+  - associatedMedia
+  - associatedReferences
+  - associatedSequences
+  - catalogNumber
+  - preparations
+  
+####Record level
+  - basisOfRecord**
+  - institutionCode
+  - collectionCode
+  - collectionID
+  - bibliographicCitation
+  - modified*
+  - dataGeneralizations
+  
+####Location
+  - decimalLatitude**
+  - decimalLongitude**
+  - coordinateUncertaintyInMeters*
+  - geodeticDatum
+  - footprintWKT*
+  - minimumDepthInMeters*
+  - maximumDepthInMeters*
+  - locality
+  - waterBody
+  - IslandGroup
+  - island
+  - country
+  - locationAccordingTo
+  - locationRemarks
+  - locationID
+  
+####Event
+  - parentEventID*
+  - eventID*
+  - eventDate**
+  - type
+  - habitat*
+  - samplingProtocol
+  - sampleSizeValue
+  - SampleSizeUnit
+  - samplingEffor
+
+*recommended for occurrence Core, according to OBIS 
+**required for occurrence Core, according to OBIS
+  
+
+
+##Terms we will be using in our output file
+These are the subset of the Darwin Core terms listed above that we will be using in the output dataset. Presented with them are the equivalent column headers for a dataset downloaded from OBIS. Also here is a brief description of each Darwin Core term used, as presented in https://obis.org/manual/darwincore/#guidelines or https://tools.gbif.org/dwca-validator/extension.do?id=dwc:Occurrence. Some Darwin Core terms differ slightly from column headers in the OBIS output file; in these intances, the Darwin Core term will be used in our output file. 
+
+ The formatting of the above information is as follows:    
+>   **[Darwin Core term] - [OBIS file column header]**  
+>   quick explanation of the term; what we'll be using for this term    
+
+The terms we will be using are:  
+**scientificName - scientificName**  
+full scientific name to lowest possible taxonomic rank, excluding qualifiers like "sp."    
+**scientificNameID - scientificNameID**    
+identifier for nomenclature (not taxon) details; for OBIS, it's WoRMS LSID, so that OBIS can "pull the taxonomic information from [WoRMS] into OBIS" 
+**kingdom - kingdom**  
+Scientific name of the kingdom to which the taxon belongs; for us, it'll be "Animalia" 
+**phylum - phylum**
+scientific name of the phylum to which the taxon belongs  
+**taxonRank - taxonRank**   
+The taxonomic rank of the most specific name in scientificName, eg. "species" or "class"  
+**identifiedBy - identifiedBy**  
+Persons, groups, or organizations who did the taxonomic identification; if a list, it must be "concatinated and separated"  
+**identificationRemarks - identificationRemarks**  
+notes on identification, such as how identified differences; coarsely catagorized things we know should be better - things like our "non-slit limpet" 
+**identificationQualifier - identificationQualifier**
+things like "cf." or "aff." indicating identification doubt
+**occurrenceID - occurrenceID**  
+"identifier for the occurrence record" that is "persistent and globally unique"; to be created if it does not yet exist, note that there are no guidelines for creating this, currently  
+**occurrenceStatus - absence**  
+presence or absence at location - note that this term differs between Darwin Core terminology and what appears in the OBIS output file, which is "absent" and uses the terms "TRUE" or "FALSE" rather than "present" or "absent"; all of our samples are present
+**associatedMedia - associatedMedia**  
+link to photograph of specimen; our upload will be a file name that will get a URL after upload  
+**associatedSequences - associatedSequences**  
+Global, unique identifier for genetic sequence info; for us, it will be the BOLD sequence idenifier  
+**basisOfRecord - basisOfRecord**  
+PreservedSpecimen, FossilSpecimen, LivingSpecimen, HumanObservation, or MachineObservation; see website for details; all of ours are PreservedSpecimen (note: ensure we have one of every type here, physically- w/o remaining sample it would be HumanObservation)  
+**decimalLatitude - decimalLatitude**  
+Latitude, in decimal degrees, of sample collection (-90 to <0 Southern Hemisphere, >0 to 90 Northern Hemisphere)  
+**decimalLongitude - decimalLongitude**  
+Longitude, in decimal degrees, of sample collection  (-180 to <0 west of Greenwich Meridian, >0 to 180 east of Greenwich Meridian)  
+**maximumDepthInMeters - maximumDepthInMeters**   
+maximum depth at which the sample would be found; for us, it's the singular recorded sample depth per specimen, and the same as minimumDepth  
+**??minimumDepthInMeters - minimumDepthInMeters**  
+minimum depth at which the sample would be found; for us, it's just the sample depth, and the same as the maximumDepth  
+**locality - locality**   
+"Specific description of the place"; for us, we will be using the exact site given in BOLD for the samples, "Mariana Trough, Snail Vent Field"  
+**waterBody - waterBody**   
+Name of the body of water from which the sample was taken, based off Getty Thesaurus of Geographic Names; for us, that would be "North Pacific"  
+**countryCode - countryCode**  
+not listed on OBIS Darwin Core stuff, but present in Darwin Core occurrence terms list, and required for GBIF; for us, it's "GU" for Guam    
+**eventDate - eventDate**  
+Date and time sample was collected, eg 1963-03-08T14:07Z for March 8th, 1963 at 2:07pm UTC  
+
+#Code
+###set libraries
+Current using packages taxize, worrms, tidyr, dplyr, and tibble. Some of these are dependent on other packages, but should install those packages as well when installing these.
+```{r}
+package_list<-c("taxize",
+                "worrms",
+                "tidyr",
+                "dplyr",
+                "tibble")
+#install.packages("taxize") #install packages as necessary
+#install.packages("tidyr") # "
+#install.packages("dplyr") # "
+#install.packages("tibble") # "
+for (i in package_list) {
+  library(i, character.only = TRUE)
+}
+```
+
+###create a string of to-be column headers (DEPRECIATED)
+NOTE: As this notebook evolved, this chunk became irrelevant. It is kept for posterity.
+--
+This chunk uses R to create a string that will be used to define column headers from the above terms for the output data table. The headers will use the equivalent terms used by the OBIS output file, and will be in the order of that file. Vocabulary should match the left set of terms in the list above, but will not be in the same order as the list above. It is worth nothing that the files output by OBIS contain more fields than we will be filling in, as does the Darwin Core. This should not be a problem.  
+
+Another weird thing is that the OBIS output file is partially alphabetical, but only partially. When reading left to right, column names are not alphabetical until "absence", after which they all are, even when that order doesn't make sense. Column headers below do not follow OBIS column header order. 
+```{r}
+# column_names<-c("occurrenceID", #base on format of previous BOLD occurrenceIDs
+#                 "scientificName",
+#                 "scientificNameID", #WoRMS LSID
+#                 "kingdom", #Animalia
+#                 "phylum",
+#                 "taxonRank", #rank of most specific nomenclature (eg, "species" or "class")
+#                 "identifcatonQualifier",
+#                 "occurrenceStatus", #presence/absence; all present for us
+#                 "basisOfRecord", #PreservedSpecimen
+#                 "identificationRemarks",
+#                 "eventDate",
+#                 "decimalLongitude",
+#                 "decimalLatitude",
+#                 "maximumDepthInMeters", #same as min depth
+#                 "minimumDepthInMeters", #same as max depth
+#                 "waterBody", #"North Pacific"
+#                 "locality", #"Mariana Trough, Snail Vent Field"
+#                 "countryCode", #"GU"
+#                 "identifiedBy",
+#                 "associatedMedia", #[photoname].JPG
+#                 "associatedSequences" #BOLD Process ID and sequence page
+#                 )
+```
+
+###pull and format relevant parts of our existing CSV of species
+Loads previously downloaded/saved CSV into R, keeps relevant columns and rows with actual data. Said csv currently defaults to "Snail_Vent_Taxon_Table_2014_samples - Sheet1.csv" when downloaded from Google Drive, and contains the following column headers in order: AphiaID, Phylum, Class, Family, Taxon, identifiedBy, associatedMedia, associatedSequences, 166, Biobox, Video 2014, notes. 
+
+This chunk also separates "Taxon" column into terms that can be matched to WoRMS database and checks Taxon value against taxon pulled from WoRMS for that AphiaID.
+```{r}
+setwd("C://Users//Dale//Desktop") #csv location
+initial<-read.csv("Snail_Vent_Taxon_Table_2014_samples - Sheet1.csv") #load csv
+
+#head(initial) #check column names
+
+IDs<-select(initial,AphiaID,Phylum,Taxon,identifiedBy,associatedMedia,associatedSequences) #keep aphiaID, phylum,taxon, identifiedBy, media and sequences (in order)
+IDs<-filter(IDs, Phylum !="") #remove rows with blank phylum; initially had AphiaID !="" to remove those with empty AphiaID, but wound up including some notes that way
+  IDs$AphiaID<-as.numeric(as.character(IDs$AphiaID)) #make AphiaIDs numeric; are a factor so have to make a character first or as.numeric yields incorrect values
+
+##IDs_remarks<-separate(data=IDs_remarks, col=Taxon, into=c("Taxon", "identificationRemarks_A"), sep=",", extra="merge") #modified word order for some entries so that taxon came before qualifier; separates at first comma -NO LONGER NEEDED
+IDs_remarks<-separate(data=IDs, col=Taxon, into=c("Taxon", "identificationRemarks_B"), sep="\\s", extra="merge") #separates at first space, replaced spaces in species names with underscores beforehand so two-name taxon remained intact
+
+# for (i in 1:length(IDs_remarks$AphiaID)) {
+#   if (isTRUE(IDs_remarks$identificationRemarks_B[i] == "sp.")){
+#     IDs_remarks$identificationRemarks_B[i]<-" "
+#   }
+#   else if (isTRUE(IDs_remarks$identificationRemarks_B[i] == "sp.")){
+#     IDs_remarks$identificationRemarks_B[i]<-" "
+#   }
+# }
+
+IDs_remarks$Taxon<- gsub(",","",IDs_remarks$Taxon) #remove commas remaining in Taxon column
+
+IDs_remarks<-add_column(IDs_remarks,identificationRemarks_A=NA,.after="Taxon") #add column to hold non-taxonomic identification info
+IDs_remarks<-add_column(IDs_remarks,Join=c(1:nrow(IDs_remarks)),.before="AphiaID")
+
+for (x in 1:length(IDs_remarks$Taxon)) { 
+  if (isTRUE(IDs_remarks$Taxon[x] == as.character(wm_id2name(IDs_remarks$AphiaID[x]))) == FALSE) { #if taxon value doesn't match sci name for aphiaID
+    IDs_remarks$identificationRemarks_A[x]<-IDs_remarks$Taxon[x] #copy existing taxon value to identificationRemarks_A
+    IDs_remarks$Taxon[x] <- as.character(wm_id2name(IDs_remarks$AphiaID[x])) #replace taxon value with WoRMS value
+  }
+}
+
+IDs_remarks<-unite(data=IDs_remarks,col=identificationRemarks,identificationRemarks_A,identificationRemarks_B,sep=" ", na.rm=TRUE, remove=TRUE) #join identificationRemarks_A and _B
+
+for (x in 1:length(IDs_remarks$Taxon)) {
+  if (IDs_remarks$Taxon[x] == IDs_remarks$identificationRemarks[x]) {
+    IDs_remarks$identificationRemarks[x] <-"" #make identificationRemarks blank if it matches Taxon; for Taxon entries where the proper entry had a space, resulting in the name being split, ultimately moved to remarks, and replaced in Taxon via AphiaID
+  }
+}
+
+IDs_remarks$identificationRemarks<- gsub("\\(","",IDs_remarks$identificationRemarks) #remove ( from identification remarks
+IDs_remarks$identificationRemarks<- gsub("\\)","",IDs_remarks$identificationRemarks) #remove ) from identification remarks
+```
+
+
+###Set up additional identification information
+Of the terms we'll be using, we've already established the following above:
+  - AphiaID (=/= occurrence ID); note that this is not a Darwin Core term, and will be removed later, after generating taxonomic identification
+  - Genesis of ScientificName (aka, "Taxon")
+  - Phylum
+  identificationQualifier identificationRemarks (currently combined under identificationRemarks)
+
+
+```{r}
+IDs_info<-data.frame(matrix(ncol=15,nrow=length(IDs_remarks$AphiaID)))
+IDs_info_cols<-c("Join", #included so able to join tables; joining by AphiaID doesn't work bc multiple entries with the same AphiaID, but different specimens
+                "occurrenceID",
+                "kingdom",
+                "taxonRank",
+                "identificationQualifier", #cf, aff, etc
+                "occurrenceStatus", #presence/absence
+                "basisOfRecord", #PreservedSpecimen
+                "eventDate", #from the same sandwich, so will be the same for all; Nov 30th 2014, 8:00 UTC
+                "decimalLongitude", # " 
+                "decimalLatitude",  # "
+                "maximumDepthInMeters", # "
+                "minimumDepthInMeters", # " (same value as max depth b/c just one depth)
+                "waterBody", #"North Pacific"
+                "locality", #"Mariana Trough, Snail Vent Field"
+                "countryCode" #"GU"
+#                "associatedMedia", #[photoname].JPG; added as a column in google sheets, so no longer needed here
+#                "associatedSequences" #BOLD sequence identifier; also added in google sheets
+)
+
+colnames(IDs_info)<-IDs_info_cols
+
+#was a for loop, doesn't need to be
+  IDs_info$kingdom<-"Animalia"  #all organisms here are animals
+  IDs_info$occurrenceStatus<-"present" #all are present
+  IDs_info$basisOfRecord<-"preservedSpecimen" #all were identified as specimens that had been preserved after colection
+  IDs_info$waterBody<-"North Pacific" #the sandwich these were from was in the North Pacific
+  IDs_info$locality<-"Mariana Trough, Snail Vent Field" #in the Snail Vent field of the Mariana Trough
+  IDs_info$countryCode<- "GU" #near Guam
+
+IDs_info$Join<-IDs_remarks$Join
+```
+
+
+###combine and fill in what we can (taxon info and known location info)
+Easier to spot mistakes than to try to adjust the row-specific stuff separately (eg, taxon rank)
+```{r}
+IDs_full<-full_join(IDs_remarks,IDs_info, by="Join")
+
+IDs_full<-IDs_full[,c("AphiaID", #reorder, exclude Join; keep AphiaID to make LSIDs and search WoRMS for taxon rank
+                      "occurrenceID", 
+                      "kingdom",
+                      "Phylum",
+                      "Taxon",
+                      "taxonRank",
+                      "identificationRemarks",
+                      "identificationQualifier",
+                      "occurrenceStatus",
+                      "basisOfRecord",
+                      "eventDate",
+                      "decimalLongitude",
+                      "decimalLatitude",
+                      "maximumDepthInMeters",
+                      "minimumDepthInMeters",
+                      "waterBody",
+                      "locality",
+                      "countryCode",
+                      "identifiedBy",
+                      "associatedMedia",
+                      "associatedSequences")]
+LSIDs<-paste("urn:lsid:marinespecies.org:taxname:",c(IDs_full$AphiaID),sep="") #create list of LSIDs, using the prefix from http://www.marinespecies.org/aphia.php?p=taxdetails&id=449922 and AphiaID
+
+#add column for LSIDs next to Taxon
+IDs_full<-add_column(IDs_full,scientificNameID=LSIDs,.after="Taxon") #add column to hold LSID data, call column "scientificNameID" populate with LSID list, place after the column Taxon
+IDs_full<-rename(.data=IDs_full, scientificName = Taxon, phylum = Phylum) #rename "Taxon" to "scientificName", rename "Phylum" to "phylum" (not capitalized)
+
+ranks<-tax_rank(IDs_full$AphiaID, db="worms") #create vector of ranks, based on AphiaID and WoRMS database
+
+IDs_full$taxonRank<-as.character(ranks) #set values in column taxonRank to equal corresponding values in ranks, created above; as character or otherwise is list
+#class(IDs_full$taxonRank)
+
+for (i in 1:length(IDs_full$AphiaID)) { #add cf., aff., etc. into identificationQualifiers; will need to manually clean commentary out later
+  if (isTRUE(grep("cf",as.character(IDs_full$identificationRemarks[i])) > 0)) {
+    IDs_full$identificationQualifier[i] <-IDs_full$identificationRemarks[i]
+    IDs_full$identificationRemarks[i] <-""
+    } 
+  if (isTRUE(grep("aff",as.character(IDs_full$identificationRemarks[i]))> 0)) {
+    IDs_full$identificationQualifier[i] <-IDs_full$identificationRemarks[i]
+    IDs_full$identificationRemarks[i] <-""
+    }
+  if (isTRUE(grep("n. sp",as.character(IDs_full$identificationRemarks[i]))> 0)) {
+    IDs_full$identificationQualifier[i] <-"n. sp."
+    IDs_full$identificationRemarks[i] <-""
+  }
+}
+  
+```
+
+
+###remove those not found on sandwich or in biobox, except for non-neoverucca
+Some of the occurrences recorded in the first Google Sheet loaded (data.frame "initial" in here) were not found in the elevator biobox washings (the source of the Biobox counts) or on Sandwich 166 (the only sandwich that's been fully sorted); they may have been observed in the video, on the substrate, or the like. Since such specimens are not represented in our sorting, we will be removing them. Below are notes on what specimens were found in which samples.
+
+Those just on 166: Ciliate
+  
+Those in both: Pseudorimula, Desbruyeresia, damaged/unidentiable, amparetid, nermertean, nematode, aplacophora, foraminifera, anemone, ostracod, hexanauplia copepod, damaged polychaete, spinoid, maldanid nicomache, unidentified hesionid
+  
+Those just in biobox: Anatoma, Lepetodrilius, Provanna, Phymhorynchus, Ventsia, non-slit  limpet, other not catagorized, capitellid, hesionid sp. 1, hesionid sp. 2, polynoid, unidentified phyllodocid-like polychaete, tanaid, mite, unassigned other
+
+Those in video, but not samples: Alviniconcha, alvinocarid, gandalfus, galatheid, shinkailepas
+
+On list, but no counts listed: Neoverruca, non-neoverruca barnacle (Leucolepas longa)
+  -we will be including the latter barnacle in our identifications
+  
+"excluded some unassigned taxa that could not be assigned with confidence"
+    -"unidentified hesionid": potentially complex nectochaetes
+    -aplicopheran/aplicopheran-like: too small
+    -nemertean
+    -"other" and "damaged" in gastropod (removed from source)
+    -"damaged" in polychaetes (removed from source)
+```{r}
+#info about results per site
+sites_for_IDs<-select(initial,-c(Class, Family, notes)) #get aphiaID, phylum, taxon, and sandwich/biobox/video counts
+sites_for_IDs<-filter(sites_for_IDs, Phylum !="") #remove rows with blank phylum
+  sites_for_IDs$AphiaID<-as.numeric(as.character(sites_for_IDs$AphiaID)) #make AphiaIDs numeric
+  sites_for_IDs$X166 <-as.numeric(as.character(sites_for_IDs$X166)) #make AphiaIDs numeric
+  sites_for_IDs$Biobox <-as.numeric(as.character(sites_for_IDs$Biobox)) #make AphiaIDs numeric
+ 
+
+      #IDs_test<-IDs_full
+  
+#in the for loop below, sometimes getting error "invalid factor level; NAs generated"; for some reason, the 0s for Alviniconcha are not recorgnized as such, so had to forcibly replace them with 0s
+sites_for_IDs$X166[which(sites_for_IDs$Taxon == "Alviniconcha sp.")]<- 0 #set replace 0 in Alviniconcha 166 and biobox wiht 0, see if that helps the below
+sites_for_IDs$Biobox[which(sites_for_IDs$Taxon == "Alviniconcha sp.")]<- 0 # ""
+  
+#mark those not in biobox or on plate "exclude" for later removal; non-neoverucca technically fits under this, but we want to include it and it's missed by the for loop below because biobox = NA, so that's fine
+for (y in 1:nrow(sites_for_IDs)) {
+   if (isTRUE(sites_for_IDs$Biobox[y] == 0 & sites_for_IDs$X166[y] == 0) == TRUE) { #keep getting error True/False needed if not doing it this way
+     IDs_full$identifiedBy[y]<-"exclude; not on plates"
+     IDs_full$identifiedBy<-as.character(IDs_full$identifiedBy)
+   }
+}          
+
+##if the above returns an error, rerun the for loop + the two lines above it, all of which are copied below; for some reason it doesn't work the first go around
+    sites_for_IDs$X166[which(sites_for_IDs$Taxon == "Alviniconcha sp.")]<- 0 #set replace 0 in Alviniconcha 166 and biobox wiht 0, see if that helps the below
+    sites_for_IDs$Biobox[which(sites_for_IDs$Taxon == "Alviniconcha sp.")]<- 0 # ""
+  
+#mark those not in biobox or on plate "exclude" for later removal; non-neoverucca technically fits under this, but we want to include it and it's missed by the for loop below because biobox = NA, so that's fine
+    for (y in 1:nrow(sites_for_IDs)) {
+      if (isTRUE(sites_for_IDs$Biobox[y] == 0 & sites_for_IDs$X166[y] == 0) == TRUE) { #keep getting error True/False needed if not doing it this way
+        IDs_full$identifiedBy[y]<-"exclude; not on plates"
+        IDs_full$identifiedBy<-as.character(IDs_full$identifiedBy)
+       }
+    }
+    
+#remove those with "exclude" in identifiedBy column
+      #IDs_test<-IDs_full[!grepl("exclude",IDs_full$identifiedBy),]
+IDs_full<-IDs_full[!grepl("exclude",IDs_full$identifiedBy),]
+
+#also remove "other" and "damaged" catagories
+IDs_full<-IDs_full[!grepl("other not categorized",IDs_full$identificationRemarks),] #changed from just "other" when large polychaete description changed
+IDs_full<-IDs_full[!grepl("damaged",IDs_full$identificationRemarks),]
+
+#and "unidentified Hesionid", aka hesionid that's not sp. 1 or sp. 2, as it's possibly a duplicate, + nemertean
+IDs_full<-IDs_full[!grepl("unidentified Hesionid",IDs_full$identificationRemarks),]
+IDs_full<-IDs_full[!grepl("Nemertea",IDs_full$identificationRemarks),]
+
+#tried to do all at once, no dice:
+  #IDs_full<-IDs_full[!grepl(c("exclude","other","damaged","unidentified Hesionid","Nemertea"),IDs_full$identifiedBy),]
+
+```
+
+###add collection info and occurrence IDs
+depth, location, eventdate will all be the same
+  even though biobox contained stuff from other sandwichs, they were all at the same location and collected at the same time
+  
+using location, etc, info submitted to BOLD for this
+
+adding occurrence IDs now that we've removed the observations we're not using; occurrence IDs wil be the same as the specimen page names in BOLD, or based on the same patterning
+
+```{r}
+#collection location, date
+lat<- 12.9531 #according to BOLD; copy-pasted decimal degrees
+lon<- 143.619 #according to BOLD; copy-pasted decimal degrees
+depth<- 2848 #according to BOLD; meters
+date<- as.Date('2014-11-30') #30-Nov-2014, according to BOLD; adjusted to correct format; no time
+#date<-"2014-11-30T08:01Z" #30-Nov-2014 08:01-ish, according to cruise report with dive logs pdf
+
+IDs_full$decimalLatitude <- lat
+IDs_full$decimalLongitude <- lon
+IDs_full$maximumDepthInMeters <- depth
+IDs_full$minimumDepthInMeters <- depth
+IDs_full$eventDate <- date
+```
+```{r}
+#occurrence ID
+
+#done individually for those with preset BOLD IDs
+IDs_full$occurrenceID[which(IDs_full$scientificName == "Desbruyeresia")] <- "SNL14S5boxDe01" #BOLD ID
+IDs_full$occurrenceID[which(IDs_full$scientificName == "Provanna")] <- "SNL14S5boxPr01" # ""
+IDs_full$occurrenceID[which(IDs_full$scientificName == "Ventsia")] <- "SNL14S5boxVe01" #""
+IDs_full$occurrenceID[which(IDs_full$scientificName == "Amphisamytha")] <- "SNL14S5166Am01" # ""
+IDs_full$occurrenceID[which(IDs_full$scientificName == "Nicomache")] <- "SNL14S5166Ma01" #Maldanid in original/BOLD ID
+IDs_full$occurrenceID[which(IDs_full$scientificName == "Ostracoda")] <- "SNL14S5boxOst01"
+
+#samples with photos from, or counts only in, 166:
+p166<-c("Ampharetidae",
+        "Nicomache",
+        "Folliculinidae"
+        )
+        #"Solenogastres" #photo'd from biobox instead
+        
+
+#samples with photos from 165:
+p165<-c("Actiniidae",
+        "Foraminifera"
+        )
+
+#create three source-of-sample options
+source<-c("box","166","165")
+
+#fill out occurrenceIDs, generically, with correct source
+for (i in 1:length(IDs_full$AphiaID)){
+  if (is.na(IDs_full$occurrenceID[i])) {
+    if (IDs_full$scientificName[i] %in% p166 == TRUE) {
+      IDs_full$occurrenceID[i] <-paste("SNL14S5",source[2],substr(IDs_full$scientificName[i],start=1,stop=2),"01",sep="")
+       }
+    if (IDs_full$scientificName[i] %in% p165 == TRUE) {
+      IDs_full$occurrenceID[i] <-paste("SNL14S5",source[3],substr(IDs_full$scientificName[i],start=1,stop=2),"01",sep="")
+       }
+    else {
+      IDs_full$occurrenceID[i] <-paste("SNL14S5",source[1],substr(IDs_full$scientificName[i],start=1,stop=2),"01",sep="")
+      }
+    }
+}
+
+#adjust duplicates manually
+  #get list of duplicates
+IDs_full %>% group_by(occurrenceID) %>% filter(n() > 1)
+
+  #manually change some of the duplicates
+#IDs_full$occurrenceID[which(IDs_full$scientificName=="Anemone")] <- "SNL14S5boxCn01" #anemone occurrence ID *An to *Cn (Cnidaria) to differentiate from anatoma - NO LONGER A DUPLICATE, PHOTO FROM 165, SO THIS IS NO LONGER REQUIRED
+#IDs_full$occurrenceID[which(IDs_full$scientificName == "Nemertean")] <- "SNL14S5boxNd01" #nematode (Ne) vs nemertea (Nr) -NO LONGER A DUPLICATE; NEMERTEAN REMOVED FROM LIST, SO THIS IS NO LONGER REQUIRED
+IDs_full$occurrenceID[which(IDs_full$scientificName == "Leucolepas longa")] <- "SNL14S5165Ba01" #barnacle Lecuolepas (now Br) vs Lepetodrilid
+IDs_full$occurrenceID[which(IDs_full$scientificName == "Polynoidae")] <- "SNL14S5boxPn01" #polynoid (now Pn) vs polychaeta (Po)
+IDs_full$occurrenceID[which(IDs_full$scientificName == "Folliculinidae")] <-"SNL14S5166Fo01" #for some reason the "Folliculinidae" in the table won't match the "Folliculinidae" in the list p166???
+
+#hesionids (3x)
+  #sp 2 is the one submitted to bold; "regular" ->has to be SNL14S5boxHe01 to match BOLD identification
+  #sp 1 is brown and skinny; will assign as SNL14S5boxHe02
+  #"unidentified hesionid", no sp. number, was unidentified or complex nectochaetel will assign as SNL14S5boxHe03
+
+#leave sp. 2 as He01, looks like species submitted to bold (lower left of 1st page of https://drive.google.com/drive/u/0/folders/0B0p75EKpP4H0QkI3aXo3SlVDbmM vs Snail_2014_box_Hesionid_25x_DSC0101_cropped.JPG; note that the latter is in both the Pescadero Submit to BOLD folder ( cropped) and the mariana hesionid photo folder (uncropped))
+IDs_full$occurrenceID[which(IDs_full$identificationRemarks == "sp. 1")]<-"SNL14S5boxHe02" #make brown skinny hesionid (count = 7 total) He02
+IDs_full$occurrenceID[which(IDs_full$identificationRemarks == "unidentified Hesionid")]<-"SNL14S5boxHe03" #make unidentified hesionid, noted as 'not identified yet, or complex nectochaete' in online google doc, He03 (count = 16 total, not in scanned notebook?)
+
+#double-check for duplicates after the above:
+IDs_full %>% group_by(occurrenceID) %>% filter(n() > 1)
+```
+
+Data for the columns associatedSequences and associatedMedia has been added individually into the csv on Google Drive, and should be present in the download. If it is not, download a more up-to-date version of the Google Sheet. Photo credit for the associated media is on the Google Sheet, but not in the output of this R notebook.
+
+###add totals columns to the dataset
+Working totals exist in a different file than the identification information (https://docs.google.com/spreadsheets/d/1kL10E5IHg4Mp-sl1gdv4-pf1uWSyjkgJVrk8xHrZF7E/edit#gid=0). Overall (sorted) totals are on different sheets of this file- one for polychaetes, one for gastropods, and one for all others (in which gastropod and polychaete morphotypes are collapsed into 'gastropods' and'polychaetes, respectively). Each of these sheets have been downloaded separately from Google Drive, and manually modified for ease of use with the already-loaded data. Only the downloaded ones are modifed. These files and the manual changes to them are as follows:
+
+  all_taxa: Snail_sandwiches_WORKING_COPY - all_taxa.csv
+-    removed commentary at top (first three rows, plus next row with the date)
+-    removed all instances of "other" in row names
+-    removed parenthetical commentary in all row names
+-    removed rows "gastropod" and "polychaete", as they are accounted for on another sheet
+-    changed "copepod/?harpacticoid" to "copepod"
+-    removed egg sac and unassigned; does not match taxon table
+-    removed plate identifying rows and "totals" rows
+-    added identificationRemarks (commentary from scientificName moved to here)
+-    capitalized first letter in scientificName values
+-    changed aplicophoran-like to Solenogastres to match existing
+-    changed cirripedia to Leucolepas longa to match existing
+  
+  gastropods: Snail_sandwiches_WORKING_COPY - gastropods.csv
+-    removed top three rows of commentary
+-    modifed row names to match the equivalent "scientificName" in our current output dataset
+-    removed damaged/not found/other rows
+-    added column names: scientificName (column where species identified), group5_sand_163_tot, group5_sand_166_tot, group5_sand_165_tot (match column headers for each sandwich totals in all_taxa),biobox_total (matches all_taxa equivalent column header),identificationRemarks (commentary that was in scientific name)
+-    deleted totals rows, and sandwich identifier rows
+-    NOTE: NO GASTROPOD DATA FOR 163 ON THIS SHEET
+    
+  polychaetes: Snail_sandwiches_WORKING_COPY - polychaetes.csv
+-    deleted summary rows at top
+-    added consistent column names (same as gastropods)
+-    deleted totals rows at the bottom
+-    changed scientificNames to be consistent with current output dataset
+-    added descriptors for hesionids in identificationRemarks
+-    NOTE: NO POLYCHAETE TOTALS FOR 163 OR 165 ON THIS SHEET
+    
+```{r}
+#setwd("c://Users/Dale/Desktop") #csvs location
+counts_all<-read.csv("Snail_sandwiches_WORKING_COPY - all_taxa.csv", header=TRUE) #all_taxa sheet
+counts_gast<-read.csv("Snail_sandwiches_WORKING_COPY - gastropods.csv", header=TRUE) #gastropods
+counts_poly<-read.csv("Snail_sandwiches_WORKING_COPY - polychaetes.csv", header=TRUE) #polychaetes
+
+#head(counts_all)
+#assuming counts_all totals are correct
+#take just the totals per sandwich, biobox for all_taxa
+counts_all<-select(counts_all,scientificName,group5_sand_163_tot,group5_sand_166_tot,group5_sand_165_tot,biobox_total,biobox_rock_totals)
+
+counts_sorted<-merge(counts_gast, counts_poly,all=TRUE)
+counts_all<-merge(counts_all,counts_sorted, all=TRUE)
+#colnames(counts_all) #see what order the columns are in
+counts_all$total_sorted<-rowSums(counts_all[,2:6], na.rm=TRUE) #sum just the numeric columns
+```
+```{r}
+#joining counts w. rest of data by occurrence ID (taxon, etc, have duplicates)
+#add occurrenceID column
+counts_all$occurrenceID<-NA
+
+#generate occurrenceID (same as earlier chunk when making occurrenceIDs for initial sheet; would have done this earlier, up near that section, but the rows to exclude were decided on before the inclusion of totals, so that was written earlier
+counts_all$occurrenceID[which(counts_all$scientificName == "Desbruyeresia")] <- "SNL14S5boxDe01" #BOLD ID
+counts_all$occurrenceID[which(counts_all$scientificName == "Provanna")] <- "SNL14S5boxPr01" # ""
+counts_all$occurrenceID[which(counts_all$scientificName == "Ventsia")] <- "SNL14S5boxVe01" #""
+counts_all$occurrenceID[which(counts_all$scientificName == "Amphisamytha")] <- "SNL14S5166Am01" # ""
+counts_all$occurrenceID[which(counts_all$scientificName == "Nicomache")] <- "SNL14S5166Ma01" #Maldanid in original/BOLD ID
+counts_all$occurrenceID[which(counts_all$scientificName == "Ostracoda")] <- "SNL14S5boxOst01"
+
+for (i in 1:length(counts_all$scientificName)){
+  if (is.na(counts_all$occurrenceID[i])) {
+    if (counts_all$scientificName[i] %in% p166 == TRUE) {
+      counts_all$occurrenceID[i] <-paste("SNL14S5",source[2],substr(counts_all$scientificName[i],start=1,stop=2),"01",sep="")
+       }
+    if (counts_all$scientificName[i] %in% p165 == TRUE) {
+      counts_all$occurrenceID[i] <-paste("SNL14S5",source[3],substr(counts_all$scientificName[i],start=1,stop=2),"01",sep="")
+       }
+    else {
+      counts_all$occurrenceID[i] <-paste("SNL14S5",source[1],substr(counts_all$scientificName[i],start=1,stop=2),"01",sep="")
+      }
+    }
+}
+
+#adjust duplicates manually
+counts_all %>% group_by(occurrenceID) %>% filter(n() > 1)
+
+  #manually change some of the duplicates
+counts_all$occurrenceID[which(counts_all$scientificName == "Nemertea")] <- "SNL14S5boxNr01" #nematode (Ne) vs nemertea (Nr) -Nemertean still in counts data, so need to make it a separate thing so counts don't get messed up; will be removed by join
+counts_all$occurrenceID[which(counts_all$scientificName == "Leucolepas longa")] <- "SNL14S5165Ba01"
+counts_all$occurrenceID[which(counts_all$scientificName == "Polynoidae")] <- "SNL14S5boxPn01"
+counts_all$occurrenceID[which(counts_all$identificationRemarks == "brown, skinny")]<-"SNL14S5boxHe02"
+counts_all$occurrenceID[which(counts_all$identificationRemarks == "unidentified Hesionid")]<-"SNL14S5boxHe03"
+
+#double-check for duplicates
+counts_all %>% group_by(occurrenceID) %>% filter(n() > 1)
+
+#prepare for adding to the IDs_full dataset: just want occurrenceID and total count
+counts_all<-select(counts_all, occurrenceID, total_sorted)
+
+#need to make counts_all$occurrenceIDs character instead of factor to avoid having to coerce into character vector anyway
+counts_all$occurrenceID<-as.character(counts_all$occurrenceID)
+#IDs_full_test<-full_join(IDs_full,counts_all,by="occurrenceID") #no more NAs from mismatched dataframes, so can comment this out; use this to test if occurrenceIDs btwn the two match without replacing IDs_full
+IDs_full<-left_join(IDs_full,counts_all,by="occurrenceID") #only use counts rows with matching occurrenceID in IDs_full already (b/c have already removed some of the rows)
+
+```
+
+###remove non-Darwin Core columns, plus other cleaning
+We want one of the versions we submit to have the total sorted per species (and AphiaID?), but that's not Darwin Core compliant, so we won't have either on the final version
+```{r} 
+#IDs_full_test<-IDs_full
+
+#remove just sp. compents in identificationRemarks
+for (i in 1:length(IDs_remarks$AphiaID)) {
+  if (isTRUE(IDs_full$identificationRemarks[i] == "sp. ")){
+    IDs_full$identificationRemarks[i]<-" "
+  }
+  else if (isTRUE(IDs_full$identificationRemarks[i] == "sp.")){
+    IDs_full$identificationRemarks[i]<-" "
+  }
+  else if (isTRUE(IDs_full$identificationRemarks[i] == "sp. 1")){
+    IDs_full$identificationRemarks[i]<-"different from other hesionid species in this dataset"
+  }
+  else if (isTRUE(IDs_full$identificationRemarks[i] == "sp. 2")){
+    IDs_full$identificationRemarks[i]<-"different from other hesionid species in this dataset"
+  }
+}
+
+#remove AphiaID, totals columns, and identificationRemarks for OBIS, and just AphiaIDs for BCODMO
+#colnames(IDs_full) #douple-check column names
+
+IDs_full_BCODMO<-select(IDs_full, -c(AphiaID))
+IDs_full_OBIS<-select(IDs_full,-c(AphiaID, total_sorted, identificationRemarks))
+
+```
+
+###output current csv
+```{r}
+write.csv(IDs_full_BCODMO,file="Snail_BCODMO_working_Nov13.csv") #BCODMO asks for tab-separated(?)
+#write.csv(IDs_full_OBIS,file="Snail_OBIS_working_Nov13.csv") #don't really /need/ separate OBIS table
+
+#non-OBIS: total counts so far; label as sorted counts, note cannot be used for relative abundance, but do give indicator of ???; samples are available in the lab
+```
+
