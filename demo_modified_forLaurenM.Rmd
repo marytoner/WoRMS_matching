@@ -83,6 +83,7 @@ for (i in 1:length(taxon_data$dataProvider_Name)) {
 }
 
 #get AphiaID using name given in dataProvider_Name; if no matches, input an error message for that AphiaID
+##NOTE: this currently uses the function taxize::get_wormsid(); we later found that this only searched MARINE TAXA
 for (i in 1:length(taxon_data$dataProvider_Name)) {
   worms_results<-get_wormsid(taxon_data$dataProvider_Name[i])
   worms_results<-worms_results[[1]]
