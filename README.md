@@ -17,7 +17,7 @@
 <br><b>Purpose</b>: Share R functions used in cleaning data for BCO-DMO submission
 <br><b>Description:</b> Demonstration of R functions used for cleaning data from hydrothermal vent macrofauna sample (Snail Vent, Mariana Back-arc) for submission to BCO-DMO and OBIS for end-of-semester lab meeting. Focused and formatted for usefulness to other students. Includes generation of a dataframe with common potential complications to cleaning (wrong AphiaID, misspelling, commentary in the name field, etc). Scripts involve retrieval of AphiaID, scientific name, taxonomic rank, kingdom, and phylum from the World Register of Marine Species (WoRMS), as well as creating occurrenceIDs unique within the dataset, and generating LSIDs using the AphiaID.
 <br><b>Comments:</b> Uncertain version differences between this and early_demo_BCODMO_2019_submission_worrms_taxize.Rmd
-<br><b>Status:<b> Not Updating (last update Nov. 20, 2019)
+<br><b>Status:</b> Not Updating (last update Nov. 20, 2019)
 
 <br><b>File Name:</b> demo_modified_forLaurenM.Rmd
 <br><b>Purpose:</b> Use list of names to get a dataframe (name, LSID, phylum, taxonomic rank) for submission to BCO-DMO
