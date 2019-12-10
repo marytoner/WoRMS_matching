@@ -1,0 +1,273 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+Messy scripts for plankton data to go from Google Sheets to BCO-DMO submittable table
+>NOTE: don't exclude non-snail columns
+
+##libraries
+Copy and pasted list of packages used from other Snail BCO-DMO submission; will adjust them as necessary
+```{r}
+package_list<-c("taxize", #NOTE WITH TAXIZE: get_wormsid and similar functions that retrieve from WoRMS using scientific name search marine taxa only
+                "worrms",
+                "tidyr",
+                "dplyr",
+                "tibble")
+#install.packages("taxize") #install packages as necessary
+#install.packages("tidyr") # "
+#install.packages("dplyr") # "
+#install.packages("tibble") # "
+for (i in package_list) {
+  library(i, character.only = TRUE)
+}
+```
+##Cleaning spreadsheet
+###FIRST: Download as .csv, load it
+https://docs.google.com/spreadsheets/d/1LY00EGjE-voEqPWtJO3-1vVkgXx5aB0TG3wLFGF6a4c/edit#gid=2017687852
+   downloaded so we can work with it offline, and not mess with the original copy
+
+Modifications to dataset before loading- see original sheet for context (NOTE: currently modified in Excel b/c convenience; if issues arise from Excel having trouble with micro as a special character, will try modifying it in a text editor)
+  removed rows 1-8; data not relevant to the final submission for this (eg, pump name, vol filtered, etc); as row "size fraction" also identifies the mooring number and site name, the mooring and site rows are unnecessary, and the values in row "size fraction" make adaquate headers for the counts columns- they identify the mooring number, site name, and size fraction
+  changed the text "size fraction"  to "group" so it may act as a column header for the far left column
+  added numbers totals row to reflect mooring number, which in turn reflects site (the mooring number for the counts by site are in the column headers for that site)
+
+Be aware that, when R reads in column headers that start with a number, it automatically adds a leading X, so that, presumably, the column header isn't interpreted as something you can do math on.
+
+```{r}
+setwd("C:/Users/Dale/Desktop") #wherever the csv is saved
+initial<-read.csv("Mariana_2010_pumps_WORKING-COPY - larval_counts.csv") #csv name
+
+initial_cleaning<-initial #create a duplicate of initial called initial_df so that if I screw something up later, I still have the original df untouched
+
+#save various columns as class character
+columns<-colnames(initial_cleaning) #make list of column names to check which ones should be characters
+char_cols<-columns[1:9] #columns 1 thru 9 contain character inputs; rest are totals
+for (i in 1:length(char_cols)){ #convert columns that should be characters to class "character"
+  initial_cleaning[,i]<-as.character(initial_cleaning[,i])
+}
+```
+
+###SECOND: Clean and check identifications
+Add AphiaIDs from Scientific Name
+Check taxon rank (from aphiaID vs manual)
+Add phylum (manual verification- correct phylum for each entry)
+```{r}
+##add column to hold AphiaID
+initial_cleaning<-add_column(initial_cleaning,AphiaID="",.after="Group")
+
+##add column to hold taxon rank check
+initial_cleaning<-add_column(initial_cleaning,taxonRank_AphiaID_match="",.after="taxonRank")
+
+##finding AphiaID from column scientificName
+for (i in 1:length(initial_cleaning$scientificName)) {
+  initial_cleaning$AphiaID[i]<-wm_name2id(initial_cleaning$scientificName[i])
+}
+#make AphiaID numeric, for later calls
+initial_cleaning$AphiaID<-as.numeric(initial_cleaning$AphiaID)
+
+#check if AphiaID/scientificName match given taxon
+##initial run: lots of FALSEes b/c upper/lowercase mismatch; worms all lowercase; changing taxonRank to all lower
+initial_cleaning$taxonRank<-tolower(initial_cleaning$taxonRank)
+##for each value in taxonRank, see if equal to the rank of the AphiaID; place this true/false as value for taxonRank_AphiaID_match column
+for (i in 1:length(initial_cleaning$scientificName)) {
+  initial_cleaning$taxonRank_AphiaID_match[i]<-isTRUE(initial_cleaning$taxonRank[i] == as.character(tax_rank(initial_cleaning$AphiaID[i], db="worms")))
+}
+
+#get phylum from AphiaID, for manual validation
+##add column to hold phylum
+initial_cleaning<-add_column(initial_cleaning,Phylum="",.before="scientificName")
+##
+for (i in 1:length(initial_cleaning$AphiaID)){
+  tree<-classification(initial_cleaning$AphiaID[i], db='worms') #get taxonomic stuff from WoRMS based on AphiaID
+  df_tree<-as.data.frame(tree[[1]]) #take just the name/rank/id portion, as a df, from classification() output
+  if (length(df_tree$name[(which(df_tree$rank=="Phylum"))])==0) { #some are only to Animalia, and so have no value for Phylum in the output from classification(); put "NA" here. This if/else helps prevent the for loop from throwing an error and stopping when it encounters a classification() output that has no phylum
+    initial_cleaning$Phylum[i]<-"NA"
+    #paste(c("error row:",i," AphiaID:",initial_cleaning$AphiaID[i]), sep="")
+  }
+  else
+    initial_cleaning$Phylum[i]<-df_tree$name[which(df_tree$rank == "Phylum")] #set name of the phylum to initial_cleaning$Phylum value
+}
+
+```
+
+###THIRD: Add additional identification data
+Generate and insert LSID from AphiaID
+```{r}
+#using LSID as scientificNameID
+#LSID is just a consistent 'preamble' URI, plus AphiaID
+for (i in 1:length(initial_cleaning$AphiaID)) {
+  initial_cleaning$scientificNameID[i]<-paste("urn:lsid:marinespecies.org:taxname:",initial_cleaning$AphiaID[i],sep="")
+}
+```
+
+
+###FOURTH: remove columns that are irrelevant at this point, rectify naming of any we're keeping (as necessary)
+Removing:
+-Groups column
+
+Renaming:
+-Specimen.ID.for.those.with.genetic.sequences to associatedSequences
+-Photograph.for.those.without.genetic.seq..bc.photo.submitted.with.genetic.seq. to associatedMedia
+-Genetic.notes  to identificationRemarks
+-X#.Total's to X#.[SITE].totals's
+
+Notes: a/p/n in "counts" of copepods and ostracods are absent/present/not applicable, respectively
+```{r}
+#initial_cleaning_2<-initial_cleaning #another backup incase of mistakes
+#initial_cleaning<-initial_cleaning_2 #load backup
+
+#check column names, to see names of which we'd like to keep/drop
+#colnames(initial_cleaning)
+
+#remove undesired names
+initial_cleaning<-initial_cleaning[,-c(1)] #subset initial_cleaning without undesired columns; just removing "Group" column
+
+#rename some (but not all!) of the non-DarwinCore-compliant column names
+initial_cleaning <- initial_cleaning %>%
+  rename(
+    associatedSequences = Specimen.ID.for.those.with.genetic.sequences, #specimenID =/= associated sequence, but presumably a link to the associated sequence can be gotten pretty easily from the specimen ID
+    associatedMedia = Photograph.for.those.without.genetic.seq..bc.photo.submitted.with.genetic.seq., #photo name, needs static reference
+    identificationRemarks = Genetic.Notes, #probably the closest fit of catagory names for notes on genetic match
+    X1.Snail.total = X1.Total, #just to make it clearer which total this refers to
+    X2.Snail.total = X2.Total, #also to make it clearer
+    X3.Archean.total = X3.Total,
+    X4.Archean.total = X4.Total,
+    X5.Urashima.total = X5.Total,
+    X6.Urashima.total = X6.Total
+    
+  )
+```
+
+
+###FIFTH: Work on Observance table - Presence/Absence columns (occurenceStatus)
+NOTE:
+The occurrence table SHOULD have duplicate scientificName entries; different rows can and do have different genetic sequencings
+The occurrence table SHOULD ALSO have all moorings and site totals and counts, not just Snail
+
+Adding presence/absence info- currently unsure if we want presence/absence at each mooring, site, or just overall. Currently, doing each mooring ->each site ->overall, and can remove unnecessary columns later. For readability, each site is done in a separate code chunk. Each mooring in that site has a separate for() loop. As some row entries have numerical values for counts and a numerical total, while others have p, a, or n (present, absent, or not applicable) in counts columns and an "NA" in the total column, said for() loop assigns "present" to any row with either "p" in one of the counts columns, or a value greater than 0 in the totals column, and "absent" to rows that have neither.
+
+Create the columns for the presence/absence info:
+-occurrence at each mooring will be in the columns occurrenceStatus_X#.[SiteName], and at each site in occurrenceStatus_[SiteName]
+-occurrenceStatus_[SiteName] summarizes the presence/absence data from the occurrenceStatus_X#.[SiteName] entries for that site, giving the overall presence/absence at that site
+-the OVERALL occurrence status of each row entry is summarized in occurrenceStatus_overall
+-none of these are darwincore complaint terms, but can be removed/modified to be so later
+```{r}
+#create occurrence columns, 1 for each Snail site; can condense into 1, but for now keep separate
+obs_table<-add_column(initial_cleaning,	occurrenceStatus_X1.Snail="",occurrenceStatus_X2.Snail="",occurrenceStatus_Snail="",occurrenceStatus_X3.Archean="",occurrenceStatus_X4.Archean="",occurrenceStatus_Archean="",occurrenceStatus_X5.Urashima="",occurrenceStatus_X6.Urashima="",occurrenceStatus_Urashima="",occurenceStatus_overall="",.after="identificationRemarks")
+```
+
+Snail Vent presence/absence (X1.Snail[...] and X2.Snail[...] columns)
+```{r}
+#fill in presence/absence based on totals column>0 or counts column presence/absence/NA
+##separate for loops for moorings 1 and 2, just for clarity/simplicity
+##data is such that either the "total" column has a value and counts columns lack the letters p/a/n, OR the "total" column is NA and counts columns have p, a, or n
+
+#presence/absence for mooring 1 at Snail Vent
+for (i in 1:length(obs_table$scientificName)) {
+  obsStatus<-paste(obs_table$X1.Snail.300[i],obs_table$X1.Snail.63[i],obs_table$X1.Snail.ship[i],sep="") #create a value to hold all the entries for individual counts (aka step 1 for dealing with columns with a mix of character and numeric values)
+    if (isTRUE(grepl("p", obsStatus))==TRUE) { #if the compilation of counts for the site contains the letter p, occurrence= "present"
+      obs_table$occurrenceStatus_X1.Snail[i]<-"present" #set occurrence at Snail 1 to "present" if "p" anywhere in that row's
+  } else if (isTRUE(as.numeric(obs_table$X1.Snail.total[i])>0) ==TRUE) { #if "p" is not in the counts columns, but the total is >0
+      obs_table$occurrenceStatus_X1.Snail[i]<-"present" #set occurrence at Snail 1 to "present"
+  } else
+      obs_table$occurrenceStatus_X1.Snail[i]<- "absent" #for all others (no 'p' in counts, and total is not >0), mark as absent
+}
+
+#presence/absence for mooring 2 at Snail Vent
+for (i in 1:length(obs_table$scientificName)) {
+  obsStatus<-paste(obs_table$X2.Snail.300[i],obs_table$X2.Snail.63[i],obs_table$X2.Snail.ship[i],sep="")
+    if (isTRUE(grepl("p", obsStatus))==TRUE) {
+      obs_table$occurrenceStatus_X2.Snail[i]<-"present"
+  } else if (isTRUE(as.numeric(obs_table$X2.Snail.total[i])>0) ==TRUE) {
+      obs_table$occurrenceStatus_X2.Snail[i]<-"present"
+  } else
+      obs_table$occurrenceStatus_X2.Snail[i]<- "absent"
+}
+
+#overall at Snail vent
+for (i in 1:length(obs_table$scientificName)) {
+   if (isTRUE(obs_table$occurrenceStatus_X1.Snail[i] == "absent" && obs_table$occurrenceStatus_X2.Snail[i] == "absent") == TRUE) { #if both moorings at snail are "absent" for the row,
+    obs_table$occurrenceStatus_Snail[i]<-"absent" #make snail vent "absent"
+ } else
+    obs_table$occurrenceStatus_Snail[i] <- "present" #otherwise (present/absent or present/present) make overall snail vent "present"
+}
+```
+
+Archean presence/absence (X3.Archean[...] and X4.Archean[...] columns)
+```{r}
+#presence/absence for mooring 3 at Archean
+for (i in 1:length(obs_table$scientificName)) {
+  obsStatus<-paste(obs_table$X3.Archean.300[i],obs_table$X3.Archean.63[i],obs_table$X3.Archean.ship[i],sep="")
+    if (isTRUE(grepl("p", obsStatus))==TRUE) { 
+      obs_table$occurrenceStatus_X3.Archean[i]<-"present"
+  } else if (isTRUE(as.numeric(obs_table$X3.Archean.total[i])>0) ==TRUE) { 
+      obs_table$occurrenceStatus_X3.Archean[i]<-"present"
+  } else
+      obs_table$occurrenceStatus_X3.Archean[i]<- "absent"
+}
+
+#presence/absence for mooring 4 at Archean
+for (i in 1:length(obs_table$scientificName)) {
+  obsStatus<-paste(obs_table$X4.Archean.300[i],obs_table$X4.Archean.63[i],obs_table$X4.Archean.ship[i],sep="")
+    if (isTRUE(grepl("p", obsStatus))==TRUE) {
+      obs_table$occurrenceStatus_X4.Archean[i]<-"present"
+  } else if (isTRUE(as.numeric(obs_table$X4.Archean.total[i])>0) ==TRUE) {
+      obs_table$occurrenceStatus_X4.Archean[i]<-"present"
+  } else
+      obs_table$occurrenceStatus_X4.Archean[i]<- "absent"
+}
+
+#overall at Archean (if present/present or absent/absent, look for "present")
+for (i in 1:length(obs_table$scientificName)) {
+    if (isTRUE(obs_table$occurrenceStatus_X3.Archean[i] == "absent" && obs_table$occurrenceStatus_X4.Archean[i] == "absent") == TRUE) {
+      obs_table$occurrenceStatus_Archean[i]<-"absent"
+  } else
+    obs_table$occurrenceStatus_Archean[i] <- "present" #otherwise (present/absent) is "present" in overall column
+}
+```
+
+Urashima presence/absence (X5.Urashima[...] and X6.Urashima[...] columns)
+```{r}
+#presence/absence for mooring 3 at Urashima
+for (i in 1:length(obs_table$scientificName)) {
+  obsStatus<-paste(obs_table$X5.Urashima.300[i],obs_table$X5.Urashima.63[i],obs_table$X5.Urashima.ship[i],sep="")
+    if (isTRUE(grepl("p", obsStatus))==TRUE) { 
+      obs_table$occurrenceStatus_X5.Urashima[i]<-"present"
+  } else if (isTRUE(as.numeric(obs_table$X5.Urashima.total[i])>0) ==TRUE) { 
+      obs_table$occurrenceStatus_X5.Urashima[i]<-"present"
+  } else
+      obs_table$occurrenceStatus_X5.Urashima[i]<- "absent"
+}
+
+#presence/absence for mooring 4 at Urashima
+for (i in 1:length(obs_table$scientificName)) {
+  obsStatus<-paste(obs_table$X6.Urashima.300[i],obs_table$X6.Urashima.63[i],obs_table$X6.Urashima.ship[i],sep="")
+    if (isTRUE(grepl("p", obsStatus))==TRUE) {
+      obs_table$occurrenceStatus_X6.Urashima[i]<-"present"
+  } else if (isTRUE(as.numeric(obs_table$X6.Urashima.total[i])>0) ==TRUE) {
+      obs_table$occurrenceStatus_X6.Urashima[i]<-"present"
+  } else
+      obs_table$occurrenceStatus_X6.Urashima[i]<- "absent"
+}
+
+#overall at Urashima (if present/present or absent/absent, look for "present")
+for (i in 1:length(obs_table$scientificName)) {
+   if (isTRUE(obs_table$occurrenceStatus_X5.Urashima[i] == "absent" && obs_table$occurrenceStatus_X6.Urashima[i] == "absent") == TRUE) {
+      obs_table$occurrenceStatus_Urashima[i]<-"absent"
+ } else
+  obs_table$occurrenceStatus_Urashima[i] <- "present" #otherwise (present/absent) is "present" in overall column
+}
+```
+
+Use the above to determine occurrence status overall
+```{r}
+#if any of the site columns are present, make overall present; otherwise, make absent
+##originall, was if all are abesnt, make absent, otherwise, make present; this version accounts for blanks, making overall absent if there's an absent or two and a blank or two
+for (i in 1:length(obs_table$scientificName)) {
+  if (isTRUE(obs_table$occurrenceStatus_Snail[i] == "present" || obs_table$occurrenceStatus_Archean[i] == 
+             "present" || obs_table$occurrenceStatus_Urashima[i] == "present") ==TRUE ) {
+    obs_table$occurenceStatus_overall[i] <- "present"
+  } else
+    obs_table$occurenceStatus_overall[i] <- "absent"
+}
+```
