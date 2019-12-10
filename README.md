@@ -1,17 +1,18 @@
 # WoRMS_matching
 
+<h2>Contents</h2>
 <b>Files that should be in this repository: </b>
--BCODMO_demo_112019.Rmd
--demo_modified_forLaurenM.Rmd
--demo_modified_forLaurenM.nb.html
--early_demo_BCODMO_2019_submission_worrms_taxize.Rmd
--name_from_AphiaID_example.Rmd
--name_from_AphiaID_example.nb.html
--Snail_BCODMO_working_2019113.Rmd
--Snail_plankton_BCODMO_working.Rmd
--Snail_plankton_BCODMO_working.nb.html
+<br>-BCODMO_demo_112019.Rmd
+<br>-demo_modified_forLaurenM.Rmd
+<br>-demo_modified_forLaurenM.nb.html
+<br>-early_demo_BCODMO_2019_submission_worrms_taxize.Rmd
+<br>-name_from_AphiaID_example.Rmd
+<br>-name_from_AphiaID_example.nb.html
+<br>-Snail_BCODMO_working_2019113.Rmd
+<br>-Snail_plankton_BCODMO_working.Rmd
+<br>-Snail_plankton_BCODMO_working.nb.html
 
-##Description of Each File
+<h2>Description of Each File</h2>
 <b>File Name:</b> BCODMO_demo_112019.Rmd
 <br><b>Purpose</b>: Share R functions used in cleaning data for BCO-DMO submission
 <br><b>Description:</b> Demonstration of R functions used for cleaning data from hydrothermal vent macrofauna sample (Snail Vent, Mariana Back-arc) for submission to BCO-DMO and OBIS for end-of-semester lab meeting. Focused and formatted for usefulness to other students. Includes generation of a dataframe with common potential complications to cleaning (wrong AphiaID, misspelling, commentary in the name field, etc). Scripts involve retrieval of AphiaID, scientific name, taxonomic rank, kingdom, and phylum from the World Register of Marine Species (WoRMS), as well as creating occurrenceIDs unique within the dataset, and generating LSIDs using the AphiaID.
