@@ -88,6 +88,7 @@ comm2sci - scientific names from common names; useful if you have something as a
 get_wormsid and get_wormsid_ -use taxon name to get AphiaID
 id2name and id2name.wormsid - use AphiaID to get taxon name
 tax_rank - get taonomic rank from name or ID
+>NOTE THAT SeARCHING WORMS BY TAXONOMIC NAME USING TAXIZE FUNCTIONS MAY NOT YIELD RESULTS NOT GIVEN "MARINE" LISTING UNDER "ENVIRONMENT" IN WoRMS
 
 Some other functions from worrms that might be useful are (note that errors from worrms are more annoying to deal with; currently using tryCatch()):
 wm_records_name and wm_records_names - WoRMS records by one (former and latter) or more (latter) taxonomic name, allows fuzzy matching and can be used to retrieve AphiaID
