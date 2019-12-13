@@ -1,4 +1,7 @@
 # WoRMS_matching
+Most of the files in this repository use functions from worrms and/or taxize. Some of the notes regarding those packages in the notebooks may be out of date, but nevertheless, reflect our knowledge of those package at the time of writing for the notebook. One of the more prevasive issues/notes is that the developmental version of 'taxize', which can be installed via "remotes::install_github("ropensci/taxize")" (which requires the package 'remotes' to be preinstalled), DOES have options for fuzzy matching, marine only or not, etc., while the one downloaded using "install_packages("taxize")" DOES NOT. Many of the files only note that "taxize" doesn't return non-marine results; this is because we were unaware of the developmental version of taxize at the time of writing. 
+<br>
+<br>Despite what the scripts in this folder may say, <b>please use the developmental version of taxize ("remotes::install_github("ropensci/taxize")"</b>, NOT the version installed via normal package installation. 
 
 <h2>Contents</h2>
 <b>Files that should be in this repository: </b>
