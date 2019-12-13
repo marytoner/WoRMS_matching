@@ -136,8 +136,8 @@ initial_cleaning <- initial_cleaning %>%
     identificationRemarks = Genetic.Notes, #probably the closest fit of catagory names for notes on genetic match
     X1.Snail.total = X1.Total, #just to make it clearer which total this refers to
     X2.Snail.total = X2.Total, #also to make it clearer
-    X3.Archean.total = X3.Total,
-    X4.Archean.total = X4.Total,
+    X3.Archaean.total = X3.Total,
+    X4.Archaean.total = X4.Total,
     X5.Urashima.total = X5.Total,
     X6.Urashima.total = X6.Total
     
@@ -159,7 +159,7 @@ Create the columns for the presence/absence info:
 -none of these are darwincore complaint terms, but can be removed/modified to be so later
 ```{r}
 #create occurrence columns, 1 for each Snail site; can condense into 1, but for now keep separate
-obs_table<-add_column(initial_cleaning,	occurrenceStatus_X1.Snail="",occurrenceStatus_X2.Snail="",occurrenceStatus_Snail="",occurrenceStatus_X3.Archean="",occurrenceStatus_X4.Archean="",occurrenceStatus_Archean="",occurrenceStatus_X5.Urashima="",occurrenceStatus_X6.Urashima="",occurrenceStatus_Urashima="",occurenceStatus_overall="",.after="identificationRemarks")
+obs_table<-add_column(initial_cleaning,	occurrenceStatus_X1.Snail="",occurrenceStatus_X2.Snail="",occurrenceStatus_Snail="",occurrenceStatus_X3.Archaean="",occurrenceStatus_X4.Archaean="",occurrenceStatus_Archaean="",occurrenceStatus_X5.Urashima="",occurrenceStatus_X6.Urashima="",occurrenceStatus_Urashima="",occurenceStatus_overall="",.after="identificationRemarks")
 ```
 
 Snail Vent presence/absence (X1.Snail[...] and X2.Snail[...] columns)
@@ -199,36 +199,36 @@ for (i in 1:length(obs_table$scientificName)) {
 }
 ```
 
-Archean presence/absence (X3.Archean[...] and X4.Archean[...] columns)
+Archaean presence/absence (X3.Archaean[...] and X4.Archaean[...] columns)
 ```{r}
-#presence/absence for mooring 3 at Archean
+#presence/absence for mooring 3 at Archaean
 for (i in 1:length(obs_table$scientificName)) {
-  obsStatus<-paste(obs_table$X3.Archean.300[i],obs_table$X3.Archean.63[i],obs_table$X3.Archean.ship[i],sep="")
+  obsStatus<-paste(obs_table$X3.Archaean.300[i],obs_table$X3.Archaean.63[i],obs_table$X3.Archaean.ship[i],sep="")
     if (isTRUE(grepl("p", obsStatus))==TRUE) { 
-      obs_table$occurrenceStatus_X3.Archean[i]<-"present"
-  } else if (isTRUE(as.numeric(obs_table$X3.Archean.total[i])>0) ==TRUE) { 
-      obs_table$occurrenceStatus_X3.Archean[i]<-"present"
+      obs_table$occurrenceStatus_X3.Archaean[i]<-"present"
+  } else if (isTRUE(as.numeric(obs_table$X3.Archaean.total[i])>0) ==TRUE) { 
+      obs_table$occurrenceStatus_X3.Archaean[i]<-"present"
   } else
-      obs_table$occurrenceStatus_X3.Archean[i]<- "absent"
+      obs_table$occurrenceStatus_X3.Archaean[i]<- "absent"
 }
 
-#presence/absence for mooring 4 at Archean
+#presence/absence for mooring 4 at Archaean
 for (i in 1:length(obs_table$scientificName)) {
-  obsStatus<-paste(obs_table$X4.Archean.300[i],obs_table$X4.Archean.63[i],obs_table$X4.Archean.ship[i],sep="")
+  obsStatus<-paste(obs_table$X4.Archaean.300[i],obs_table$X4.Archaean.63[i],obs_table$X4.Archaean.ship[i],sep="")
     if (isTRUE(grepl("p", obsStatus))==TRUE) {
-      obs_table$occurrenceStatus_X4.Archean[i]<-"present"
-  } else if (isTRUE(as.numeric(obs_table$X4.Archean.total[i])>0) ==TRUE) {
-      obs_table$occurrenceStatus_X4.Archean[i]<-"present"
+      obs_table$occurrenceStatus_X4.Archaean[i]<-"present"
+  } else if (isTRUE(as.numeric(obs_table$X4.Archaean.total[i])>0) ==TRUE) {
+      obs_table$occurrenceStatus_X4.Archaean[i]<-"present"
   } else
-      obs_table$occurrenceStatus_X4.Archean[i]<- "absent"
+      obs_table$occurrenceStatus_X4.Archaean[i]<- "absent"
 }
 
-#overall at Archean (if present/present or absent/absent, look for "present")
+#overall at Archaean (if present/present or absent/absent, look for "present")
 for (i in 1:length(obs_table$scientificName)) {
-    if (isTRUE(obs_table$occurrenceStatus_X3.Archean[i] == "absent" && obs_table$occurrenceStatus_X4.Archean[i] == "absent") == TRUE) {
-      obs_table$occurrenceStatus_Archean[i]<-"absent"
+    if (isTRUE(obs_table$occurrenceStatus_X3.Archaean[i] == "absent" && obs_table$occurrenceStatus_X4.Archaean[i] == "absent") == TRUE) {
+      obs_table$occurrenceStatus_Archaean[i]<-"absent"
   } else
-    obs_table$occurrenceStatus_Archean[i] <- "present" #otherwise (present/absent) is "present" in overall column
+    obs_table$occurrenceStatus_Archaean[i] <- "present" #otherwise (present/absent) is "present" in overall column
 }
 ```
 
@@ -270,7 +270,7 @@ Use the above to determine occurrence status overall
 #if any of the site columns are present, make overall present; otherwise, make absent
 ##originall, was if all are abesnt, make absent, otherwise, make present; this version accounts for blanks, making overall absent if there's an absent or two and a blank or two
 for (i in 1:length(obs_table$scientificName)) {
-  if (isTRUE(obs_table$occurrenceStatus_Snail[i] == "present" || obs_table$occurrenceStatus_Archean[i] == 
+  if (isTRUE(obs_table$occurrenceStatus_Snail[i] == "present" || obs_table$occurrenceStatus_Archaean[i] == 
              "present" || obs_table$occurrenceStatus_Urashima[i] == "present") ==TRUE ) {
     obs_table$occurenceStatus_overall[i] <- "present"
   } else
@@ -288,24 +288,6 @@ for (i in 1:length(obs_table$scientificName)) {
 Collapse table such that duplicates are represented in one row
 -all genetic squencing, photos, etc, need to be collapsed too, and not lost
 
-testing solution from https://www.biostars.org/p/167028/ -ddply in plyr, loading plyr causes issues with rename() above
-```{r}
-collapsed_cleaning<-initial_cleaning[,1:10] #test with just a few cols
-
-collapsed<-ddply(collapsed_cleaning, .(final.category.used.for.abundance), summarize,
-                 AphiaID = paste(unique(AphiaID), collapse=","),
-                 scientificNameID = paste(unique(scientificNameID), collapse=","),
-                 Phylum = paste(unique(Phylum), collapse=","),
-                 scientificName = paste(unique(scientificName), collapse=","),
-                 taxonRank = paste(unique(taxonRank), collapse=","),
-                 taxonRank_AphiaID_match = paste(unique(taxonRank_AphiaID_match), collapse=","),
-                 original.category..gastropods.organized.by.size..Bethany.s.benthic.checklist.gastropods.by.genus. = paste(unique(original.category..gastropods.organized.by.size..Bethany.s.benthic.checklist.gastropods.by.genus.)),
-                 associatedSequences = paste(unique(associatedSequences), collapse=","),
-                 associatedMedia = paste(unique(associatedMedia), collapse=",")
-                )
-```
-
-
 testing solution from https://markhneedham.com/blog/2015/06/27/r-dplyr-squashing-multiple-rows-per-group-into-one/ - error: Column `AphiaID` must be length 1 (a summary value), not 2
 ```{r}
 collapsed_cleaning<-initial_cleaning #establish a dataframe to hold collapsed data
@@ -316,7 +298,7 @@ collapsed_cleaning<-collapsed_cleaning %>%
     arrange(final.category.used.for.abundance, .by_group=TRUE) #arrange first by AphiaID, then by final.category.used.for.abundance
 
 #summarize within a group_by; using final.category.used.for.abundance, because some disparate entries share aphiaIDs (eg, various gastropods)
-#uses plyr
+
 collapsed<-collapsed_cleaning %>% #new df called collaped
   group_by(final.category.used.for.abundance) %>% #group by final.category.used.for.abundance
     summarize( #collapse by group
@@ -337,24 +319,106 @@ collapsed<-collapsed_cleaning %>% #new df called collaped
       X2.Snail.300 = paste(X2.Snail.300,collapse="+"),
       X2.Snail.63 = paste(X2.Snail.63,collapse="+"),
       X2.Snail.ship = paste(X2.Snail.ship,collapse="+"),
-      X3.Archean.300 = paste(X3.Archean.300,collapse="+"),
-      X3.Archean.63 = paste(X3.Archean.63,collapse="+"),
-      X3.Archean.ship = paste(X3.Archean.ship,collapse="+"),
-      X4.Archean.300 = paste(X4.Archean.300,collapse="+"),
-      X4.Archean.63 = paste(X4.Archean.63,collapse="+"),
-      X4.Archean.ship = paste(X4.Archean.ship,collapse="+"),
+      X3.Archaean.300 = paste(X3.Archaean.300,collapse="+"),
+      X3.Archaean.63 = paste(X3.Archaean.63,collapse="+"),
+      X3.Archaean.ship = paste(X3.Archaean.ship,collapse="+"),
+      X4.Archaean.300 = paste(X4.Archaean.300,collapse="+"),
+      X4.Archaean.63 = paste(X4.Archaean.63,collapse="+"),
+      X4.Archaean.ship = paste(X4.Archaean.ship,collapse="+"),
       X5.Urashima.300 = paste(X5.Urashima.300,collapse="+"),
       X5.Urashima.63 = paste(X5.Urashima63,collapse="+"),
-      X5.Archean.ship = paste(X5.Archean.ship,collapse="+"),
+      X5.Urashima.ship = paste(X5.Urashima.ship,collapse="+"),
       X6.Urashima.300 = paste(X6.Urashima.300,collapse="+"),
       X6.Urashima.63 = paste(X6.Urashima63,collapse="+"),
-      X6.Archean.ship = paste(X6.Archean.ship,collapse="+"),
+      X6.Urashima.ship = paste(X6.Urashima.ship,collapse="+"),
       X1.Snail.total = paste(X1.Snail.total, collapse="+"),
       X2.Snail.total = paste(X2.Snail.total, collapse="+"),
-      X3.Archean.total = paste(X3.Archean.total, collapse="+"),
-      X4.Archean.total = paste(X4.Archean.total, collapse="+"),
+      X3.Archaean.total = paste(X3.Archaean.total, collapse="+"),
+      X4.Archaean.total = paste(X4.Archaean.total, collapse="+"),
       X5.Urashima.total = paste(X5.Urashima.total, collapse="+"),
       X6.Urashima.total = paste(X6.Urashima.total, collapse="+")
     )
 
-````
+```
+
+testing solution from https://www.biostars.org/p/167028/ -ddply in plyr, loading plyr causes issues with rename() earlier
+```{r}
+collapsed_cleaning<-initial_cleaning[,1:10] #test with just a few cols
+
+collapsed<-ddply(collapsed_cleaning, .(final.category.used.for.abundance), summarize,
+                 AphiaID = paste(unique(AphiaID), collapse="+"),
+                 scientificNameID = paste(unique(scientificNameID), collapse="+"),
+                 Phylum = paste(unique(Phylum), collapse="+"),
+                 scientificName = paste(unique(scientificName), collapse="+"),
+                 taxonRank = paste(unique(taxonRank), collapse="+"),
+                 taxonRank_AphiaID_match = paste(unique(taxonRank_AphiaID_match), collapse="+"),
+                 original.category..gastropods.organized.by.size..Bethany.s.benthic.checklist.gastropods.by.genus. = paste(unique(original.category..gastropods.organized.by.size..Bethany.s.benthic.checklist.gastropods.by.genus.)),
+                 associatedSequences = paste(unique(associatedSequences), collapse="+"),
+                 associatedMedia = paste(unique(associatedMedia), collapse="+")
+                )
+```
+
+testing solution from https://stackoverflow.com/questions/51516632/aggregate-character-variables, combined with previous solutions re: summarize
+-This creates a df with 1 of each AphiaID-final.category.used.for.abundance, but results in multiple entries for, say, Phylum in some places
+```{r}
+#does sort of what we're looking for, but results in duplicates in ea. column
+#collapse3<- intital_cleaning %>%
+  #group_by(AphiaID, final.category.used.for.abundance) %>%
+ # summarise_all(toString)
+
+#make a df arranged by AphiaID, then final.category, to make it easier to compare to collapsed dataframe and make sure things aren't lost or something
+collapsed_forcomparison<-initial_cleaning %>%
+  group_by(AphiaID) %>% #group by AphiaID
+    arrange(final.category.used.for.abundance, .by_group=TRUE)
+
+#Creating collapsed dataframe - no duplicates in phylum, etc
+collapsed<-initial_cleaning%>%
+  group_by(AphiaID, final.category.used.for.abundance) %>% #some have same final category and diff aphiaIDs, and vice versa?
+  summarise(
+    scientificNameID = toString(unique(scientificNameID)), #insert as string, no duplicates
+    phylum = toString(unique(Phylum)), #string, no duplicates
+    scientificName = toString(unique(scientificName)), 
+    original.category..gastropods.organized.by.size..Bethany.s.benthic.checklist.gastropods.by.genus. = toString(unique(original.category..gastropods.organized.by.size..Bethany.s.benthic.checklist.gastropods.by.genus.)),
+    associatedSequences = toString(associatedSequences), #ok if duplicates
+    associatedMedia = toString(associatedMedia),
+    identificationRemarks = toString(identificationRemarks),
+  #can't just do sum b/c p/a/n in some rows
+    X1.Snail.300 = paste(X1.Snail.300,collapse="+"),
+    X1.Snail.63 = paste(X1.Snail.63,collapse="+"),
+    X1.Snail.ship = paste(X1.Snail.ship,collapse="+"),
+    X2.Snail.300 = paste(X2.Snail.300,collapse="+"),
+    X2.Snail.63 = paste(X2.Snail.63,collapse="+"),
+    X2.Snail.ship = paste(X2.Snail.ship,collapse="+"),
+    X3.Archaean.300 = paste(X3.Archaean.300,collapse="+"),
+    X3.Archaean.63 = paste(X3.Archaean.63,collapse="+"),
+    X3.Archaean.ship = paste(X3.Archaean.ship,collapse="+"),
+    X4.Archaean.300 = paste(X4.Archaean.300,collapse="+"),
+    X4.Archaean.63 = paste(X4.Archaean.63,collapse="+"),
+    X4.Archaean.ship = paste(X4.Archaean.ship,collapse="+"),
+    X5.Urashima.300 = paste(X5.Urashima.300,collapse="+"),
+    X5.Urashima.63 = paste(X5.Urashima.63,collapse="+"),
+    X5.Urashima.ship = paste(X5.Urashima.ship,collapse="+"),
+    X6.Urashima.300 = paste(X6.Urashima.300,collapse="+"),
+    X6.Urashima.63 = paste(X6.Urashima.63,collapse="+"),
+    X6.Urashima.ship = paste(X6.Urashima.ship,collapse="+"),
+    X1.Snail.total = paste(X1.Snail.total, collapse="+"),
+    X2.Snail.total = paste(X2.Snail.total, collapse="+"),
+    X3.Archaean.total = paste(X3.Archaean.total, collapse="+"),
+    X4.Archaean.total = paste(X4.Archaean.total, collapse="+"),
+    X5.Urashima.total = paste(X5.Urashima.total, collapse="+"),
+    X6.Urashima.total = paste(X6.Urashima.total, collapse="+")
+  )
+
+collapsed2<-collapsed #testing for loop
+
+for (i in 1:length(collapsed$AphiaID)) {
+  if (isTRUE(grepl("[^a-z]", collapsed[i,]))==FALSE){ #if this row DOESN'T have a letter in it
+    collapsed$X1.Snail.300[i]<-eval(collapsed$X1.Snail.300[i]) #do math on this column
+  } else
+     print ("at least one count contains letters")
+}
+   
+#different for loop for p/a/n;
+  #else if (isTRUE(grepl("p"), #COLUMN/ETC - IF THIS ROW-COLUMN HAS AT LEAST 1 P, PUT P; continue this with other else ifs
+ 
+```
