@@ -283,4 +283,6 @@ collapsed<-initial_cleaning #establish a dataframe to hold collapsed data
 collapsed<-collapsed %>% 
   group_by(AphiaID) %>% #group by AphiaID
     arrange(final.category.used.for.abundance, .by_group=TRUE) #arrange first by AphiaID, then by final.category.used.for.abundance
+
+
 ````
