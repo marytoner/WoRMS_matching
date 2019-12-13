@@ -8,8 +8,9 @@ Messy scripts for plankton data to go from Google Sheets to BCO-DMO submittable 
 ##libraries
 Copy and pasted list of packages used from other Snail BCO-DMO submission; will adjust them as necessary
 ```{r}
-package_list<-c("taxize", #NOTE WITH TAXIZE: get_wormsid and similar functions that retrieve from WoRMS using scientific name search marine taxa only
+package_list<-c(#"taxize", #NOTE WITH TAXIZE: get_wormsid and similar functions that retrieve from WoRMS using scientific name search marine taxa only UNLESS you install the development version
                 "worrms",
+                #"plyr", #maybe don't need; if used, need to load before deplyr/tidyverse
                 "tidyr",
                 "dplyr",
                 "tibble")
@@ -20,6 +21,11 @@ package_list<-c("taxize", #NOTE WITH TAXIZE: get_wormsid and similar functions t
 for (i in package_list) {
   library(i, character.only = TRUE)
 }
+
+#development version of taxize
+# install.packages("remotes")
+# remotes::install_github("ropensci/taxize")
+library(taxize)
 ```
 ##Cleaning spreadsheet
 ###FIRST: Download as .csv, load it
@@ -273,16 +279,82 @@ for (i in 1:length(obs_table$scientificName)) {
 ```
 
 
-###unknown number - one row per "higher level taxon"
+
+##HERE BE DRAGONS
+-testing ground to figure out how to get additional steps done
+-unfinished, possibly nonfunctional, scripts
+
+###undetermined number - one row per "higher level taxon"
 Collapse table such that duplicates are represented in one row
 -all genetic squencing, photos, etc, need to be collapsed too, and not lost
 
+testing solution from https://www.biostars.org/p/167028/ -ddply in plyr, loading plyr causes issues with rename() above
 ```{r}
-collapsed<-initial_cleaning #establish a dataframe to hold collapsed data
+collapsed_cleaning<-initial_cleaning[,1:10] #test with just a few cols
 
-collapsed<-collapsed %>% 
+collapsed<-ddply(collapsed_cleaning, .(final.category.used.for.abundance), summarize,
+                 AphiaID = paste(unique(AphiaID), collapse=","),
+                 scientificNameID = paste(unique(scientificNameID), collapse=","),
+                 Phylum = paste(unique(Phylum), collapse=","),
+                 scientificName = paste(unique(scientificName), collapse=","),
+                 taxonRank = paste(unique(taxonRank), collapse=","),
+                 taxonRank_AphiaID_match = paste(unique(taxonRank_AphiaID_match), collapse=","),
+                 original.category..gastropods.organized.by.size..Bethany.s.benthic.checklist.gastropods.by.genus. = paste(unique(original.category..gastropods.organized.by.size..Bethany.s.benthic.checklist.gastropods.by.genus.)),
+                 associatedSequences = paste(unique(associatedSequences), collapse=","),
+                 associatedMedia = paste(unique(associatedMedia), collapse=",")
+                )
+```
+
+
+testing solution from https://markhneedham.com/blog/2015/06/27/r-dplyr-squashing-multiple-rows-per-group-into-one/ - error: Column `AphiaID` must be length 1 (a summary value), not 2
+```{r}
+collapsed_cleaning<-initial_cleaning #establish a dataframe to hold collapsed data
+
+#reorganize for aesthetics
+collapsed_cleaning<-collapsed_cleaning %>% 
   group_by(AphiaID) %>% #group by AphiaID
     arrange(final.category.used.for.abundance, .by_group=TRUE) #arrange first by AphiaID, then by final.category.used.for.abundance
 
+#summarize within a group_by; using final.category.used.for.abundance, because some disparate entries share aphiaIDs (eg, various gastropods)
+#uses plyr
+collapsed<-collapsed_cleaning %>% #new df called collaped
+  group_by(final.category.used.for.abundance) %>% #group by final.category.used.for.abundance
+    summarize( #collapse by group
+      AphiaID = paste(unique(AphiaID), sep=", "), #aphiaID stays the same; should only be 1 AphiaID per group, so this should work?
+      scientificNameID = paste(unique(scientificNameID)), #same
+      Phylum = paste(unique(Phylum)),
+      taxonRank = paste(unique(taxonRank)),
+      taxonRank_AphiaID_match = paste(unique(taxonRank_AphiaID_match)),
+      original.category..gastropods.organized.by.size..Bethany.s.benthic.checklist.gastropods.by.genus. = paste(unique(original.category..gastropods.organized.by.size..Bethany.s.benthic.checklist.gastropods.by.genus., collapse=", ")), #paste unique entries of this column into one box; trying not to lose data
+      associatedSequences = paste(associatedSequences, collapse=", "), #paste all sequencies for a given group in sequences column of resulting row 
+      associatedMedia = paste(associatedMedia, collapse=", "), #paste all media for a given group in media column of resulting row
+      identificationRemarks = paste(unique(identificationRemarks, collapse=", ")), #paste all unique ID remarks
+      
+  #for counts/totals columns, using paste bc of rows with letters in them, hopefully can come back and add/otherwise fix this in another for loop or something
+      X1.Snail.300 = paste(X1.Snail.300,collapse="+"),
+      X1.Snail.63 = paste(X1.Snail.63,collapse="+"),
+      X1.Snail.ship = paste(X1.Snail.ship,collapse="+"),
+      X2.Snail.300 = paste(X2.Snail.300,collapse="+"),
+      X2.Snail.63 = paste(X2.Snail.63,collapse="+"),
+      X2.Snail.ship = paste(X2.Snail.ship,collapse="+"),
+      X3.Archean.300 = paste(X3.Archean.300,collapse="+"),
+      X3.Archean.63 = paste(X3.Archean.63,collapse="+"),
+      X3.Archean.ship = paste(X3.Archean.ship,collapse="+"),
+      X4.Archean.300 = paste(X4.Archean.300,collapse="+"),
+      X4.Archean.63 = paste(X4.Archean.63,collapse="+"),
+      X4.Archean.ship = paste(X4.Archean.ship,collapse="+"),
+      X5.Urashima.300 = paste(X5.Urashima.300,collapse="+"),
+      X5.Urashima.63 = paste(X5.Urashima63,collapse="+"),
+      X5.Archean.ship = paste(X5.Archean.ship,collapse="+"),
+      X6.Urashima.300 = paste(X6.Urashima.300,collapse="+"),
+      X6.Urashima.63 = paste(X6.Urashima63,collapse="+"),
+      X6.Archean.ship = paste(X6.Archean.ship,collapse="+"),
+      X1.Snail.total = paste(X1.Snail.total, collapse="+"),
+      X2.Snail.total = paste(X2.Snail.total, collapse="+"),
+      X3.Archean.total = paste(X3.Archean.total, collapse="+"),
+      X4.Archean.total = paste(X4.Archean.total, collapse="+"),
+      X5.Urashima.total = paste(X5.Urashima.total, collapse="+"),
+      X6.Urashima.total = paste(X6.Urashima.total, collapse="+")
+    )
 
 ````
